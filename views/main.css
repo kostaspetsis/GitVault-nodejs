@@ -1,0 +1,106 @@
+@import "loginSignupForm.css";
+
+*{
+	/* border:2px solid red; */
+}
+body{
+	/* background-color: rgb(0, 89, 255); */
+	background-color: white;
+	margin:0 auto;
+}
+p {
+	color:rgb(173, 173, 173);
+	/* text-shadow: 0.3px 0px #000000; */
+	margin: 0;
+    padding:0;
+	width:100%;
+}
+
+.wrapText{
+	white-space: normal;
+	white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+    white-space: -webkit-pre-wrap; /*Chrome & Safari */ 
+    white-space: -pre-wrap;        /* Opera 4-6 */
+    white-space: -o-pre-wrap;      /* Opera 7 */
+    white-space: pre-wrap;         /* CSS3 */
+    position: relative;
+    /* word-break: break-all; */
+	word-wrap: break-word;
+}
+
+.alignH{
+	display:flex; 
+	flex-direction: row; 
+	justify-content: center;
+	align-items: center;
+}
+
+.alignV{
+	display:flex; 
+	flex-direction: column; 
+	justify-content: center;
+	align-items: center;
+}
+.alignV1{
+	display:flex; 
+	flex-direction: column; 
+	justify-content: center;
+
+}
+
+.verticallyCenter{
+	background-color:rgb(209, 209, 209);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	/* vertically aligns items */
+	align-items: center;
+	/* horizontally aligns items */
+}
+
+.containerHead{
+	padding-bottom: 50px;
+	color:rgb(217, 0, 255);
+	background-image:linear-gradient(rgb(0, 32, 92),70%,rgb(0, 89, 255),95%,rgb(255,255,255));
+	/* background-color:rgb(49,49,49); */
+}
+
+.dropArea {
+	/* background-color:rgb(95, 2, 80); */
+	background-color: rgb(204, 204, 204);
+	border:5px solid rgb(217, 0, 255);
+	border-radius:20px;
+	cursor: copy;
+	/* cursor: cell; */
+	width:100%;
+	height:400px;
+}
+.loginBtn{
+	/* background-color:green;
+	color:white;
+	border:2px solid rgba(0,180,0); */
+	width:auto;
+	display: flex;
+  align-items: center;
+  justify-content: center;
+	
+}
+.login{
+	align-items: center;
+	justify-content: center;
+	border:2ps solid green;
+}
+
+.alignHorizontally{
+	display:inline;
+}
+
+.active{
+    color:            rgb(219, 38, 38);
+    background-color: rgb(47, 255, 203);
+}
+.nav-item{
+	/* color:red; */
+	padding:10px;
+	/* border:2px solid red; */
+}

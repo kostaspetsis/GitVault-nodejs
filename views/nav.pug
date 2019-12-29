@@ -1,0 +1,27 @@
+// Navigation Bar
+nav.navbar.navbar-expand-md.navbar-dark.sticky-top
+  // <a class="navbar-brand" href="index.html" style="color:rgb(47, 255, 203);">GitVault</a>
+  img(src='Logo.png', alt='', width='100')
+  button.navbar-toggler.navbar-toggler-right(type='button', data-toggle='collapse', data-target='#navb', aria-expanded='true')
+    span.navbar-toggler-icon
+  #navb.navbar-collapse.collapse.hide
+    ul#navbar-ul.navbar-nav
+      li.nav-item.active
+        a.nav-link(href='/explore') Explore
+      li.nav-item
+        a.nav-link(href='/upload') Upload
+      li.nav-item
+        a.nav-link(href='/profile') Profile
+      li.nav-item
+        a.nav-link(href='/projects') Projects
+      li.nav-item
+        a.nav-link(href='/guide') Guide
+    ul.nav.navbar-nav.ml-auto
+      li.nav-item
+        // <a class="nav-link" href="#"><span class="fas fa-user"></span> Sign Up</a>
+        a.login(onclick="document.getElementById('modal-wrapper').style.display='block'") Sign Up
+      li.nav-item
+        // <a class="nav-link" href="#"><span class="fas fa-sign-in-alt"></span> Login</a>
+        a.login(onclick="document.getElementById('modal-wrapper').style.display='block'") Login
+// Navigation Bar
+

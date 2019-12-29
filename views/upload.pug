@@ -1,0 +1,89 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(http-equiv='X-UA-Compatible', content='IE=edge')
+  title GitVault
+  meta(name='viewport', content='width=device-width, initial-scale=1')
+  // jQuery
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+  link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css', integrity='sha384-SI27wrMjH3ZZ89r4o+fGIJtnzkAnFs3E4qz9DIYioCQ5l9Rd/7UAa8DHcaL8jkWt', crossorigin='anonymous')
+  link(rel='shortcut icon', type='image/x-icon', href='favicon.ico')
+  script(src='setActiveNavItem.js')
+  link(rel='stylesheet', type='text/css', media='screen', href='main.css')
+  // <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+  script(src='upload.js')
+  script(src='main.js')
+// Header, icon
+.containerHead(align='center')
+  // Navigation Bar
+  //
+    <div id="nav-placeholder"></div>
+    <script>
+    $.get("nav.html", function(data){
+    $("#nav-placeholder").replaceWith(data);
+    });
+    </script>
+  // Navigation Bar
+  include nav.pug
+  
+  // Navigation Bar
+  // Login Signup Form
+  #modal-wrapper.modal
+    form.modal-content.animate(action='/action_page.php')
+      .imgcontainer
+        span.close(onclick="document.getElementById('modal-wrapper').style.display='none'", title='Close PopUp') &times;
+        img.avatar(src='1.png', alt='Avatar')
+        h1(style='text-align:center') Login/Register
+      .container
+        input(type='text', placeholder='Username/Email', name='loginusername')
+        input(type='password', placeholder='Password', name='loginpassword')
+        // <button onclick="window.location.href='explore.html';">Login</button>
+        // <input class="loginBtn" type="button" onclick="location.href='explore.html';" value="Login" />
+        a.btn.btn-success.loginBtn(href='') Login
+        input(type='text', placeholder='Username', name='registerusername')
+        input(type='text', placeholder='Email', name='registeremail')
+        input(type='password', placeholder='Password', name='registerpassword')
+        a.btn.btn-warning.loginBtn(href='') Register
+        //
+          <input class="verticallyCenter" type="checkbox" style="margin:26px 30px;"> Remember me
+          <a class="verticallyCenter" href="#" style="text-decoration:none; float:right; margin-right:34px; margin-top:26px;">Forgot Password ?</a>
+  // Login Signup Form
+  img(src='Logo.png', alt='', width='400')
+  h1 Upload your code to GitVault now!
+  .containerBody(style='width:35%;')
+    p.wrapText
+      span
+        | Using our vault, it helps us retreive all the useful info that our bleeding edge technology will use to solve many problems in the IT industry
+style.
+  .modal{
+  z-index:  1000000;
+  position:fixed;
+  top:0;
+  left:0;
+  }
+  .modal-backdrop.in {z-index: 1020!important;}
+  /* .modal { background: rgba(255, 255, 255, 0.8); min-height:1000000px; } */
+#pleaseWaitDialog.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        h1 Proccess
+      .modal-body
+        .progress
+          #progressBarValue.progress-bar.progress-bar-success.progress-bar-striped(role='progressbar', aria-valuenow='40', aria-valuemin='0', aria-valuemax='100', style='width: 40%')
+            span.sr-only 40% Complete (success)
+// Drag n Drop Area
+#onClickFileManager.containerBody.verticallyCenter.dropArea(align='center', ondrop='drop(event)', ondragover='allowDrop(event)')
+  p
+    span Drag and drop here the folder containing the source code of your project
+  // This is the "Browse button.No file selected"
+  // Make it hidden.When user clicks the dropArea, jQuery clicks the Browse and no Browse button needs to show
+  input#theFileInput(type='file', onchange='loadFileAsText(this);', style='display:none;')
+// Drag n Drop Area
+a(draggable='true', ondragstart='drag(event)', width='336', height='69') Drag me
+.code-section
+  p#code
+script(src='https://code.jquery.com/jquery-3.2.1.min.js')
+script(src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js', integrity='sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo', crossorigin='anonymous')
+script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/js/bootstrap.min.js', integrity='sha384-3qaqj0lc6sV/qpzrc1N5DC6i1VRn/HyX4qdPaiEFbn54VjQBEU341pvjz7Dv3n6P', crossorigin='anonymous')
+

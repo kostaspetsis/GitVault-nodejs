@@ -1,0 +1,153 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(http-equiv='X-UA-Compatible', content='IE=edge')
+  title GitVault
+  meta(name='viewport', content='width=device-width, initial-scale=1')
+  // jQuery
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+  link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css', integrity='sha384-SI27wrMjH3ZZ89r4o+fGIJtnzkAnFs3E4qz9DIYioCQ5l9Rd/7UAa8DHcaL8jkWt', crossorigin='anonymous')
+  link(rel='shortcut icon', type='image/x-icon', href='favicon.ico')
+  script(src='setActiveNavItem.js')
+  link(type='text/css', rel="stylesheet" , href='main.css')
+  // <script src="main.js"></script>
+  script(src='http://code.jquery.com/jquery-2.1.4.min.js')
+  style.
+    video {
+    width: 100%;
+    float: left;
+    padding:25px;
+    }
+    .grid-container {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: auto auto auto;
+    /* background-color: #2196F3; */
+    padding: 10px;
+    }
+    .grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    /* border: 1px solid rgba(0, 0, 0, 0.8); */
+    padding: 20px;
+    font-size: 30px;
+    /* text-align: center; */
+    /* display: inline-flex; */
+    align-items: center;
+    }
+    .grid-info{
+    justify-content: center;
+    }
+    .project_title{
+    color:black;
+    font-size: 20px;
+    }
+    .project_description{
+    color:grey;
+    font-size:20px;
+    height:auto;
+    /* border:2px solid red; */
+    }
+// Header, icon
+.containerHead(align='center')
+  // Navigation Bar
+  //
+    <div id="nav-placeholder"></div>
+    <script>
+    $.get("nav.html", function(data){
+    $("#nav-placeholder").replaceWith(data);
+    });
+    </script>
+  // Navigation Bar
+  include nav.pug
+  
+  // Navigation Bar
+  // Login Signup Form
+  #modal-wrapper.modal
+    form.modal-content.animate(action='/action_page.php')
+      .imgcontainer
+        span.close(onclick="document.getElementById('modal-wrapper').style.display='none'", title='Close PopUp') &times;
+        img.avatar(src='1.png', alt='Avatar')
+        h1(style='text-align:center') Login/Register
+      .container
+        input(type='text', placeholder='Username/Email', name='loginusername')
+        input(type='password', placeholder='Password', name='loginpassword')
+        // <button onclick="window.location.href='explore.html';">Login</button>
+        // <input class="loginBtn" type="button" onclick="location.href='explore.html';" value="Login" />
+        a.btn.btn-success.loginBtn(href='') Login
+        input(type='text', placeholder='Username', name='registerusername')
+        input(type='text', placeholder='Email', name='registeremail')
+        input(type='password', placeholder='Password', name='registerpassword')
+        a.btn.btn-warning.loginBtn(href='') Register
+        //
+          <input class="verticallyCenter" type="checkbox" style="margin:26px 30px;"> Remember me
+          <a class="verticallyCenter" href="#" style="text-decoration:none; float:right; margin-right:34px; margin-top:26px;">Forgot Password ?</a>
+  // Login Signup Form
+  // Navigation Bar
+  img(src='Logo.png', alt='', width='400')
+  //
+    <h1>Upload your code to GitVault now!</h1>
+    <div class="containerBody" style="width:35%;">
+    <p class="wrapText"><span>Using our vault, it helps us retreive all the useful info that our bleeding edge technology will use to solve many problems in the IT industry</span></p>
+    </div>
+.grid-container
+  //
+    <div class="grid-item">
+    <video autoplay loop muted>
+    <source src="https://www.youtube.com/watch?v=HdghNESbPOk" type="video/mp4">
+    </video>
+    </div>
+  a(href='viewProject.html')
+    .grid-item
+      img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+      .grid-info
+        img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
+        p.project_title.alignHorizontally Cpp Raytracer
+        p.project_description Ray tracer implemented in cpp
+  .grid-item
+    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+    .grid-info
+      img.avatar.alignHorizontally(src='Profile2.png', style='width:30px;height:30px;', alt='Avatar')
+      p.project_title.alignHorizontally My Website code
+      p.project_description Repo of my code website
+  .grid-item
+    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+    .grid-info
+      img.avatar.alignHorizontally(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+      p.project_title.alignHorizontally Html components
+      p.project_description Html components for the web
+  .grid-item
+    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+    .grid-info
+      img.avatar.alignHorizontally(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+      p.project_title.alignHorizontally My Personal Git
+      p.project_description Online Space for my university projects
+  .grid-item
+    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  .grid-item
+    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  .grid-item
+    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  .grid-item
+    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  .grid-item
+    video(autoplay='', loop='', muted='')
+      source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
+  .grid-item
+    video(autoplay='', loop='', muted='')
+      source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
+  .grid-item
+    video(autoplay='', loop='', muted='')
+      source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
+// The core Firebase JS SDK is always required and must be listed first
+script(src='/__/firebase/7.5.0/firebase-app.js')
+//
+  TODO: Add SDKs for Firebase products that you want to use
+  https://firebase.google.com/docs/web/setup#available-libraries
+script(src='/__/firebase/7.5.0/firebase-analytics.js')
+// Initialize Firebase
+script(src='/__/firebase/init.js')
+
+script(src='https://code.jquery.com/jquery-3.4.1.slim.min.js', integrity='sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n', crossorigin='anonymous')
+script(src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js', integrity='sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo', crossorigin='anonymous')
+script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/js/bootstrap.min.js', integrity='sha384-3qaqj0lc6sV/qpzrc1N5DC6i1VRn/HyX4qdPaiEFbn54VjQBEU341pvjz7Dv3n6P', crossorigin='anonymous')
+
