@@ -1,3 +1,7 @@
+script.
+  function Login(){
+    window.location.href += 'login/'+document.getElementById('loginUsername').value + '/' +document.getElementById('loginPassword').value;
+  };
 // Navigation Bar
 nav.navbar.navbar-expand-md.navbar-dark.sticky-top
   // <a class="navbar-brand" href="index.html" style="color:rgb(47, 255, 203);">GitVault</a>
@@ -25,3 +29,24 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
         a.login(onclick="document.getElementById('modal-wrapper').style.display='block'") Login
 // Navigation Bar
 
+// Login Signup Form
+#modal-wrapper.modal
+  form.modal-content.animate(action='/action_page.php')
+    .imgcontainer
+      span.close(onclick="document.getElementById('modal-wrapper').style.display='none'", title='Close PopUp') &times;
+      img.avatar(src='1.png', alt='Avatar')
+      h1(style='text-align:center') Login/Register
+    .container
+      input(class= "loginUsername" id = "loginUsername" type='text', placeholder='Username/Email', name='loginUsername')
+      input(class= "loginPassword" id = "loginPassword" type='password', placeholder='Password', name='loginPassword')
+      // <button onclick="window.location.href='explore.html';">Login</button>
+      // <input class="loginBtn" type="button" onclick="location.href='explore.html';" value="Login" />
+      a.btn.btn-success.loginBtn(onclick='Login()') Login
+      input(type='text', placeholder='Username', name='registerusername')
+      input(type='text', placeholder='Email', name='registeremail')
+      input(type='password', placeholder='Password', name='registerpassword')
+      a.btn.btn-warning.loginBtn(href='') Register
+      //
+        <input class="verticallyCenter" type="checkbox" style="margin:26px 30px;"> Remember me
+        <a class="verticallyCenter" href="#" style="text-decoration:none; float:right; margin-right:34px; margin-top:26px;">Forgot Password ?</a>
+// Login Signup Form

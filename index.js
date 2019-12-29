@@ -9,9 +9,31 @@ var spawn = require('child_process').spawn;
 var backend = require('git-http-backend');
 var zlib = require('zlib');
 
+
 const express=require('express');
 const auth = require('./auth');
 const app = express();
+
+
+//Authenticate-Login
+const session = require('express-session');
+const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const firebase = require('firebase');
+var firebaseApp = firebase.initializeApp({
+	apiKey: "AIzaSyDrjgnOgtKmQ1XfmW8RjmnSxda1685-Yik",
+	authDomain: "gitvaultdb.firebaseapp.com",
+	databaseURL: "https://gitvaultdb.firebaseio.com",
+	projectId: "gitvaultdb",
+	storageBucket: "gitvaultdb.appspot.com",
+	messagingSenderId: "1085601843051"
+});
+const firebaseAuth = firebaseApp.auth();
+// Get a reference to the database service
+var database = firebaseApp.database();
+
+app.use(express.json());
+
 app.set('views', './views')
 app.set('view engine', 'pug');
 var path = require ('path');
@@ -46,7 +68,32 @@ console.log("Mpike edw -> /");
 	// GitRequest(req,res);
 	res.render("index");
 });
-app.get('/:user/:repo', GitRequest);
+
+function UserAuthenticate(username, password){
+	// firebaseAuth.createUserWithEmailAndPassword(username,password);
+	var ref = database.ref('user');
+	ref.on('value',success,error);
+	return true;
+}
+function success(data){
+	console.log(data.val());
+}
+function error(err){
+	console.log(err);
+}
+// app.get('/:user/:repo', GitRequest);
+app.get('/login/:username/:password', (req,res) =>{
+	var username = req.params.username;
+	var password = req.params.password;
+	var auth = UserAuthenticate(username,password);
+	if (auth === true){//Correct User credentials
+		//Login User and save give him a cookie!
+		//UserLogin(username, password);
+	}else{
+		//
+	}
+	res.send('username:'+req.params.username+' password:'+req.params.password);
+});
 
 
 
