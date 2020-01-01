@@ -4,6 +4,9 @@
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
+// Restrict write access to only me 
+// https://stackoverflow.com/questions/39133918/restricting-firebase-read-write-access-to-only-myself
+// https://firebase.google.com/docs/auth/web/password-auth
 var http = require('http');
 var spawn = require('child_process').spawn;
 var backend = require('git-http-backend');
@@ -31,6 +34,9 @@ var firebaseApp = firebase.initializeApp({
 const firebaseAuth = firebaseApp.auth();
 // Get a reference to the database service
 var database = firebaseApp.database();
+var globalUsernames=[];
+GetUsers();
+
 
 app.use(express.json());
 
@@ -73,10 +79,107 @@ function UserAuthenticate(username, password){
 	// firebaseAuth.createUserWithEmailAndPassword(username,password);
 	var ref = database.ref('user');
 	ref.on('value',success,error);
+
+	var newUser = {
+		email:"kostaspetsis@outlook.com",
+		password:"00000",
+		project_ids:"-1",
+		username:"kostaspetsis"
+	};
+	RegisterUser(newUser);
 	return true;
 }
+
+function CollectUsernames(data){
+	var users = data.val();
+	var keys = Object.keys(users);
+	var usernamesArray = [];
+	for(var i = 0; i < keys.length; i++){
+		var username = users[keys[i]].username;
+		console.log(keys[i],username);
+		usernamesArray.push(username);
+	}
+	
+	return usernamesArray;
+}
+function CollectUsernamesError(error){
+
+	console.log("[GetUsers]:"+error);
+	return [];
+
+}
+function GetUsers(){
+	var ref = database.ref('user');
+	
+	var b = {
+		
+		somefunction:function(data){
+	// ref.on("value",CollectUsernames,CollectUsernamesError);
+	ref.on("value",(data)=>{
+		var users = data.val();
+	var keys = Object.keys(users);
+	var usernamesArray = [];
+	for(var i = 0; i < keys.length; i++){
+		var username = users[keys[i]].username;
+		console.log(keys[i],username);
+		usernamesArray.push(username);
+		globalUsernames.push(username);
+	}
+	
+	return usernamesArray;
+	},(error)=>{
+		console.log("[GetUsers]:"+error);
+	return [];
+	});
+	}
+};
+
+	return b.somefunction(function(foo){
+		            // 101 + 1
+		return foo;
+  });
+	// console.log('array'+usernamesArray);
+	// return usernamesArray;
+}
+
+function UserWithUsernameExists(username){
+	var users = globalUsernames;
+	console.log('users'+users);
+	if(users !== undefined){
+		for (let i = 0; i < users.length; i++) {
+			const element = users[i];
+
+			if(element === username){
+				console.log("Username:"+username+" exists");
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function RegisterUser(newUser){
+	if(UserWithUsernameExists('kostaspetsis')===true){
+		console.log("Couldn't register user with username:"+newUser['username']);
+	}else{
+		console.log("Registering user with username:"+newUser['username']);
+		var ref = database.ref('user').push(newUser);
+	}
+	
+}
+
 function success(data){
-	console.log(data.val());
+	var users = data.val();
+	var keys = Object.keys(users);
+	console.log(keys);
+	// [ 'email', 'password', 'project_ids', 'username' ]
+	var email = users['email'];
+	var password = users['password'];
+	var project_ids = users['project_ids'];
+	var username = users['username'];
+	
+	console.log(email,password,project_ids,username);
+	
 }
 function error(err){
 	console.log(err);
