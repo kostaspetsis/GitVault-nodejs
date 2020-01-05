@@ -23,7 +23,7 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
     ul.nav.navbar-nav.ml-auto
       li.nav-item
         // <a class="nav-link" href="#"><span class="fas fa-user"></span> Sign Up</a>
-        a.login(onclick="document.getElementById('modal-wrapper').style.display='block'") Sign Up
+        a.login(onclick="document.getElementById('modal-wrapperRegister').style.display='block'") Sign Up
       li.nav-item
         // <a class="nav-link" href="#"><span class="fas fa-sign-in-alt"></span> Login</a>
         a.login(onclick="document.getElementById('modal-wrapper').style.display='block'") Login
@@ -42,11 +42,20 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
       // <button onclick="window.location.href='explore.html';">Login</button>
       // <input class="loginBtn" type="button" onclick="location.href='explore.html';" value="Login" />
       a.btn.btn-success.loginBtn(onclick='Login()') Login
-      input(type='text', placeholder='Username', name='registerusername')
-      input(type='text', placeholder='Email', name='registeremail')
-      input(type='password', placeholder='Password', name='registerpassword')
+      input(class = "registerUsername" id = "registerUsername" type='text', placeholder='Username', name='registerusername')
+      input(class = "registerEmail" id = "registerEmail" type='text', placeholder='Email', name='registeremail')
+      input(class = "registerPassword" id = "registerPassword" type='password', placeholder='Password', name='registerpassword')
       a.btn.btn-warning.loginBtn(href='') Register
       //
         <input class="verticallyCenter" type="checkbox" style="margin:26px 30px;"> Remember me
         <a class="verticallyCenter" href="#" style="text-decoration:none; float:right; margin-right:34px; margin-top:26px;">Forgot Password ?</a>
-// Login Signup Form
+#modal-wrapperRegister.modal
+  form.modal-content.animate(action='/register') 
+    .imgcontainer
+      span.close(onclick="document.getElementById('modal-wrapperRegister').style.display='none'", title='Close PopUp') &times;
+      img.avatar(src='1.png', alt='Avatar')
+      h1(style='text-align:center') Register
+    input(class = "registerUsername" id = "registerUsername" type='text', placeholder='Username', name='registerusername')
+    input(class = "registerEmail" id = "registerEmail" type='text', placeholder='Email', name='registeremail')
+    input(class = "registerPassword" id = "registerPassword" type='password', placeholder='Password', name='registerpassword')
+    a.btn.btn-warning.loginBtn(href='') Register

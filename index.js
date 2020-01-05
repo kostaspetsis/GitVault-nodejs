@@ -11,7 +11,7 @@ var http = require('http');
 var spawn = require('child_process').spawn;
 var backend = require('git-http-backend');
 var zlib = require('zlib');
-
+var bodyParser = require('body-parser')
 
 const express=require('express');
 const auth = require('./auth');
@@ -34,11 +34,15 @@ var firebaseApp = firebase.initializeApp({
 const firebaseAuth = firebaseApp.auth();
 // Get a reference to the database service
 var database = firebaseApp.database();
-var globalUsernames=[];
-GetUsers();
+// var globalUsernames=[];
+const UserData = require('./UserData.js');
+const Users = require('./Users.js');
+var DbUsers = null;
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-app.use(express.json());
+// app.use(express.json());
 
 app.set('views', './views')
 app.set('view engine', 'pug');
@@ -62,10 +66,46 @@ function GitRequest(req,res){
         }else{
                 console.log("Not authenticated");
         }
-	
-	
 }
 
+function ConnectToDatabase(){
+	DbUsers = new Users();
+	var ref = database.ref('user');
+	ref.on("value",(data)=>{
+		var users = data.val();
+		var keys = Object.keys(users);
+		// globalUsernames = [];
+		
+		DbUsers.Reset();
+		for(var i = 0; i < keys.length; i++){
+			var username = users[keys[i]].username;
+			console.log(keys[i],username);
+			var proj_idsKeys=[];
+			if(users[keys[i]] !== null && users[keys[i]] !== undefined && users[keys[i]].project_ids !== null && users[keys[i]].project_ids !== undefined){
+				console.log(users[keys[i].project_ids]);
+				proj_idsKeys = Object.keys(users[keys[i]].project_ids);
+				var proj_idsArray = [];
+				for (let j = 0; j < proj_idsKeys.length; j++) {
+					const element = proj_idsKeys[j];
+					proj_idsArray.push(users[keys[i]].project_ids[proj_idsKeys[j]]);
+				}
+				var user = new UserData(
+					users[keys[i]].username,
+					users[keys[i]].password,
+					users[keys[i]].email,
+					users[keys[i]].id,
+					proj_idsArray);
+				// // Update Users in my database
+				
+				DbUsers.AddUser(user);
+			}
+			
+			
+		}
+	},(error)=>{
+		console.log("[ConnectToDatabase]:"+error);
+	});
+}
 
 
 
@@ -75,127 +115,47 @@ console.log("Mpike edw -> /");
 	res.render("index");
 });
 
-function UserAuthenticate(username, password){
-	// firebaseAuth.createUserWithEmailAndPassword(username,password);
-	var ref = database.ref('user');
-	ref.on('value',success,error);
-
-	var newUser = {
-		email:"kostaspetsis@outlook.com",
-		password:"00000",
-		project_ids:"-1",
-		username:"kostaspetsis"
-	};
-	RegisterUser(newUser);
-	return true;
-}
-
-function CollectUsernames(data){
-	var users = data.val();
-	var keys = Object.keys(users);
-	var usernamesArray = [];
-	for(var i = 0; i < keys.length; i++){
-		var username = users[keys[i]].username;
-		console.log(keys[i],username);
-		usernamesArray.push(username);
-	}
-	
-	return usernamesArray;
-}
-function CollectUsernamesError(error){
-
-	console.log("[GetUsers]:"+error);
-	return [];
-
-}
-function GetUsers(){
-	var ref = database.ref('user');
-	
-	var b = {
-		
-		somefunction:function(data){
-	// ref.on("value",CollectUsernames,CollectUsernamesError);
-	ref.on("value",(data)=>{
-		var users = data.val();
-	var keys = Object.keys(users);
-	var usernamesArray = [];
-	for(var i = 0; i < keys.length; i++){
-		var username = users[keys[i]].username;
-		console.log(keys[i],username);
-		usernamesArray.push(username);
-		globalUsernames.push(username);
-	}
-	
-	return usernamesArray;
-	},(error)=>{
-		console.log("[GetUsers]:"+error);
-	return [];
-	});
-	}
-};
-
-	return b.somefunction(function(foo){
-		            // 101 + 1
-		return foo;
-  });
-	// console.log('array'+usernamesArray);
-	// return usernamesArray;
-}
-
-function UserWithUsernameExists(username){
-	var users = globalUsernames;
-	console.log('users'+users);
-	if(users !== undefined){
-		for (let i = 0; i < users.length; i++) {
-			const element = users[i];
-
-			if(element === username){
-				console.log("Username:"+username+" exists");
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-function RegisterUser(newUser){
-	if(UserWithUsernameExists('kostaspetsis')===true){
-		console.log("Couldn't register user with username:"+newUser['username']);
-	}else{
-		console.log("Registering user with username:"+newUser['username']);
-		var ref = database.ref('user').push(newUser);
-	}
-	
-}
-
-function success(data){
-	var users = data.val();
-	var keys = Object.keys(users);
-	console.log(keys);
-	// [ 'email', 'password', 'project_ids', 'username' ]
-	var email = users['email'];
-	var password = users['password'];
-	var project_ids = users['project_ids'];
-	var username = users['username'];
-	
-	console.log(email,password,project_ids,username);
-	
-}
-function error(err){
-	console.log(err);
-}
 // app.get('/:user/:repo', GitRequest);
 app.get('/login/:username/:password', (req,res) =>{
+	// var username = req.params.username;
+	// var password = req.params.password;
+
+	const {username}=req.body;
+	console.log("USERNAME:"+username);
+	// res.send('username:'+req.params.username+' password:'+req.params.password);
+});
+
+app.post('/login1',(req,res)=>{
+	const {username, password} = req.body;
+	res.send("<h1>"+username+","+password+"</h1>");
+});
+
+// app.get('/login1',(req,res)=>{
+	
+// 	res.send('<h1>Haha</h1');
+// });
+
+app.get('/register/:username/:password/:email', (req,res) =>{
 	var username = req.params.username;
 	var password = req.params.password;
-	var auth = UserAuthenticate(username,password);
-	if (auth === true){//Correct User credentials
-		//Login User and save give him a cookie!
-		//UserLogin(username, password);
-	}else{
-		//
-	}
-	res.send('username:'+req.params.username+' password:'+req.params.password);
+	var email = req.params.email;
+	var id = DbUsers.data.length + 1;
+	var user = new UserData(
+		username,
+		password,
+		email,
+		id,
+		[-1]
+	);
+	database.ref('user').push({
+		username:user.username,
+		email:user.email,
+		password:user.password,
+		id:user.id,
+		project_ids:user.project_ids
+	});
+	// DbUsers.AddUser(user);
+	res.send('username:'+req.params.username+' password:'+req.params.password+", email:"+email+", project_ids:"+user.project_ids);
 });
 
 
@@ -251,6 +211,7 @@ var GitServer = http.createServer(GitRequest);
 WebServer.listen(5000);
 GitServer.listen(8080);
 
+ConnectToDatabase();
 
 // process.EventEmitter = require('events');
 // // https://www.npmjs.com/package/node-git-server
