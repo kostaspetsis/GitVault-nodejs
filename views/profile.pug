@@ -24,44 +24,24 @@ head
     </script>
   // Navigation Bar
   include nav.pug
-  
-  // Navigation Bar
-  // Login Signup Form
-  #modal-wrapper.modal
-    form.modal-content.animate(action='/action_page.php')
-      .imgcontainer
-        span.close(onclick="document.getElementById('modal-wrapper').style.display='none'", title='Close PopUp') &times;
-        img.avatar(src='1.png', alt='Avatar')
-        h1(style='text-align:center') Login/Register
-      .container
-        input(type='text', placeholder='Username/Email', name='loginusername')
-        input(type='password', placeholder='Password', name='loginpassword')
-        // <button onclick="window.location.href='explore.html';">Login</button>
-        // <input class="loginBtn" type="button" onclick="location.href='explore.html';" value="Login" />
-        a.btn.btn-success.loginBtn(href='') Login
-        input(type='text', placeholder='Username', name='registerusername')
-        input(type='text', placeholder='Email', name='registeremail')
-        input(type='password', placeholder='Password', name='registerpassword')
-        a.btn.btn-warning.loginBtn(href='') Register
-        //
-          <input class="verticallyCenter" type="checkbox" style="margin:26px 30px;"> Remember me
-          <a class="verticallyCenter" href="#" style="text-decoration:none; float:right; margin-right:34px; margin-top:26px;">Forgot Password ?</a>
-  // Login Signup Form
-  // Navigation Bar
+  script.
+    var username = "default"
+    var password = "default"
+    var email = "default"
 .alignH
   img(src='1.png', alt='')
   .profile-info
     h1 My Profile
     div(style='width:700px;display:flex; flex-direction: row; justify-content: center; align-items: center;')
       h1 Username
-      input(type='text', value='kostas', name='loginusername')
+      input(type='text', value=username, name='loginusername')
     .alignH(style='width:700px;')
       h1 Password
-      input(type='password', value='Password', name='loginpassword')
+      input(type='password', value=password, name='loginpassword')
     .alignH(style='width:700px;')
       h1 Email
-      input(type='text', value='kostas@email.com', name='')
-    a(href='projects.html', style='font-size: 30px;') My Projects
+      input(type='text', value=email, name='')
+    a(href='/projects', style='font-size: 30px;') My Projects
     button.btn.btn-success
       img(style='width:50px;', src='https://cdn2.iconfinder.com/data/icons/pointed-edge-web-navigation/130/tick-green-512.png')
       | Save Settings

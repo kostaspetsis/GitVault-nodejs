@@ -37,10 +37,61 @@ var database = firebaseApp.database();
 // var globalUsernames=[];
 const UserData = require('./UserData.js');
 const Users = require('./Users.js');
-var DbUsers = null;
 
-app.use(bodyParser.urlencoded({ extended: true }));
+//DB sync
+var ProjectData = require('./ProjectData.js');
+var Projects = require('./Projects.js');
+var DbUsers = null;
+var DbProjects = null;
+
+function CreateNewProject(title,project_path,video_path,from_user){
+	var projId = DbProjects.length+1;
+	var Project = new ProjectData({
+		title:title,
+		project_path:project_path,
+		video_path:video_path,
+		from_user:from_user,
+		id:projId,
+		likes:0,
+		dislikes:0,
+		comments:[]
+	});
+	// DbProjects.push(Project);
+	return Project;
+}
+
+function FillProjectData(id, likes,dislikes,comments){
+	for (let i = 0; i < DbProjects.length; i++) {
+		const element = DbProjects[i];
+		var Project = element;
+		if( Project.id === id){
+			Project.likes = likes;
+			Project.dislikes = dislikes;
+			Project.comments = comments;
+			break;
+		}
+	}
+}
+
+
+// Add this line below
+app.use(bodyParser.urlencoded({ extended: false })) 
+
 app.use(bodyParser.json());
+const DAYS2 = 1000 * 60 * 60 * 24 * 2;
+const SESS_NAME='sid';
+const SESS_LIFETIME = DAYS2;
+const SESS_SECRET = 'ssid/quiet!authSecr3t'
+app.use(session({
+	name:SESS_NAME,
+	resave:true,
+	saveUninitialized:false,//Useful for implementing login
+	secret:SESS_SECRET,
+	cookie:{
+		maxAge:SESS_LIFETIME
+	},
+	
+}));
 
 // app.use(express.json());
 
@@ -107,12 +158,23 @@ function ConnectToDatabase(){
 	});
 }
 
+const redirectLogin = (req, res, next) => {
+	if( !req.session.userId){
+		res.redirect('explore');
+	}else{
+		next();
+	}
+}
 
+function isUserAuthorized(req){
+	return (req.session.userId)?true:false;
+}
 
 app.get('/', (req,res)=>{
 console.log("Mpike edw -> /");
 	// GitRequest(req,res);
-	res.render("index");
+    res.render('index', {authorized:isUserAuthorized(req)});
+	// res.render('index', {authorized:true});
 });
 
 // app.get('/:user/:repo', GitRequest);
@@ -126,10 +188,43 @@ app.get('/login/:username/:password', (req,res) =>{
 });
 
 app.post('/login1',(req,res)=>{
-	const {username, password} = req.body;
-	res.send("<h1>"+username+","+password+"</h1>");
+	const {loginUsername, loginPassword} = req.body;
+
+	console.log(loginUsername,loginPassword);
+	var user = DbUsers.GetUserByUsername(loginUsername);
+	if( user !== -1){
+		var userpassword = user.password;
+		if(userpassword === loginPassword){
+			console.log("Successfull login of "+ loginUsername);
+			var id = user.id;
+			req.session.userId = id;
+			console.log("req.session.userId = " + req.session.userId);
+		}
+	}
+	
+	// res.send("<h1>"+loginUsername+","+loginPassword+"</h1>");
+	res.redirect('/');
 });
 
+app.post('/register1', (req,res) => {
+	const {registerUsername, registerPassword, registerEmail} = req.body;
+	var id = DbUsers.data.length + 1;
+	var user = new UserData(
+		registerUsername,
+		registerPassword,
+		registerEmail,
+		id,
+		[-1]
+	);
+	database.ref('user').push({
+		username:user.username,
+		email:user.email,
+		password:user.password,
+		id:user.id,
+		project_ids:user.project_ids
+	});
+	res.redirect('/explore');
+});
 // app.get('/login1',(req,res)=>{
 	
 // 	res.send('<h1>Haha</h1');
@@ -161,42 +256,77 @@ app.get('/register/:username/:password/:email', (req,res) =>{
 
 
 app.get('/explore', (req,res) => {
-	res.render('index');
-	// res.send('HelloWorld');
+	console.log(req.session.userId);
+    res.render('index', {authorized:isUserAuthorized(req)});
 });
 
 app.get('/viewProject', (req,res) => {
-	res.render('viewProject');
+	res.render('viewProject', {authorized:isUserAuthorized(req)});
 	// res.send('HelloWorld');
 });
 
 
 
-app.get('/upload', (req,res) => {
-	res.render('upload');
+app.get('/upload', redirectLogin, (req,res) => {
+	res.render('upload', {authorized:isUserAuthorized(req)});
 	// res.send('HelloWorld');
 });
 
 
-app.get('/profile', (req,res) => {
+app.get('/profile', redirectLogin, (req,res) => {
 	console.log("Profile requested");
-	res.render('profile');
+	var username = "undefined-username";
+	var password = "undefined-password";
+	var email = "undefined-emai";
+	var user = DbUsers.GetUserById(req.session.userId);
+	if(user !== -1){
+		username = user.username;
+		password = user.password;
+		email = user.email;
+	}
+	res.render('profile', {authorized:isUserAuthorized(req), username:username, password:password, email:email});
 	// res.send('HelloWorld');
 });
 
 
-app.get('/projects', (req,res) => {
-	res.render('projects');
+app.get('/projects', redirectLogin, (req,res) => {
+	var Projects = [];
+	
+	for (let i = 0; i < 4; i++) {
+		var Project = {};
+		Project["ProjectTitle"] = "Title" + i;
+		Project["ProjectDescription"] = "Description" + i;
+		Project["ProjectReadme"] = "Readme" + i;
+		Project["ProjectGif"] = "gifs/newgif.gif";
+		Projects.push(Project);
+	}
+	
+	res.render('projects', {
+		authorized:isUserAuthorized(req),
+		ProjectGif:"gifs/newgif.gif",
+		ProjectTitle:"Project Title",
+		ProjectDescription:"Project Description",
+		ProjectReadme:"Project Readme",
+		Projects:Projects
+	});
 	// res.send('HelloWorld');
 });
 
 
 app.get('/guide', (req,res) => {
-	res.render('guide');
+	res.render('guide', {authorized:isUserAuthorized(req)});
 	// res.send('HelloWorld');
 });
 
-
+app.post('/logout', (req,res) => {
+	req.session.destroy(err => {
+		if (err){
+			return res.redirect('/explore');
+		}
+		res.clearCookie(SESS_NAME);
+		res.redirect('/');
+	});
+});
 //exports.app = functions.https.onRequest(app);
 /*const server = app.listen(7000, () => {
   console.log(`Express running → PORT ${server.address().port}`);

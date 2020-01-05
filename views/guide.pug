@@ -27,29 +27,6 @@ head
   // Navigation Bar
   include nav.pug
   
-  // Navigation Bar
-  // Login Signup Form
-  #modal-wrapper.modal
-    form.modal-content.animate(action='/action_page.php')
-      .imgcontainer
-        span.close(onclick="document.getElementById('modal-wrapper').style.display='none'", title='Close PopUp') &times;
-        img.avatar(src='1.png', alt='Avatar')
-        h1(style='text-align:center') Login/Register
-      .container
-        input(type='text', placeholder='Username/Email', name='loginusername')
-        input(type='password', placeholder='Password', name='loginpassword')
-        // <button onclick="window.location.href='explore.html';">Login</button>
-        // <input class="loginBtn" type="button" onclick="location.href='explore.html';" value="Login" />
-        a.btn.btn-success.loginBtn(href='') Login
-        input(type='text', placeholder='Username', name='registerusername')
-        input(type='text', placeholder='Email', name='registeremail')
-        input(type='password', placeholder='Password', name='registerpassword')
-        a.btn.btn-warning.loginBtn(href='') Register
-        //
-          <input class="verticallyCenter" type="checkbox" style="margin:26px 30px;"> Remember me
-          <a class="verticallyCenter" href="#" style="text-decoration:none; float:right; margin-right:34px; margin-top:26px;">Forgot Password ?</a>
-  // Login Signup Form
-  // Navigation Bar
 h1(style='color:red;font-size:30px;')
   b
     | GitVault

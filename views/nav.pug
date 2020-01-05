@@ -21,12 +21,26 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
       li.nav-item
         a.nav-link(href='/guide') Guide
     ul.nav.navbar-nav.ml-auto
-      li.nav-item
-        // <a class="nav-link" href="#"><span class="fas fa-user"></span> Sign Up</a>
-        a.login(onclick="document.getElementById('modal-wrapperRegister').style.display='block'") Sign Up
-      li.nav-item
-        // <a class="nav-link" href="#"><span class="fas fa-sign-in-alt"></span> Login</a>
-        a.login(onclick="document.getElementById('modal-wrapper').style.display='block'") Login
+      script.
+        var authorized = true;
+        //- var ptag = '!{ptag}';
+      //- if ptag == "dsdasd"
+      //-   h1 #{ptag}
+      //- else
+      //-   h1 ptag
+      if authorized == false
+        li.nav-item
+          // <a class="nav-link" href="#"><span class="fas fa-user"></span> Sign Up</a>
+          a.login(onclick="document.getElementById('modal-wrapperRegister').style.display='block'") Sign Up
+        li.nav-item
+          // <a class="nav-link" href="#"><span class="fas fa-sign-in-alt"></span> Login</a>
+          a.login(onclick="document.getElementById('modal-wrapperLogin').style.display='block'") Login
+      else if authorized == true
+        img.avatar(src='1.png', alt='Avatar')
+        form(action='/logout' method='post')
+          input(type='submit' value='Logout')
+      else
+        h1 #{authorized} 1
 // Navigation Bar
 
 // Login Signup Form
@@ -50,12 +64,22 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
         <input class="verticallyCenter" type="checkbox" style="margin:26px 30px;"> Remember me
         <a class="verticallyCenter" href="#" style="text-decoration:none; float:right; margin-right:34px; margin-top:26px;">Forgot Password ?</a>
 #modal-wrapperRegister.modal
-  form.modal-content.animate(action='/register') 
+  form.modal-content.animate(action='/register1') 
     .imgcontainer
       span.close(onclick="document.getElementById('modal-wrapperRegister').style.display='none'", title='Close PopUp') &times;
       img.avatar(src='1.png', alt='Avatar')
       h1(style='text-align:center') Register
-    input(class = "registerUsername" id = "registerUsername" type='text', placeholder='Username', name='registerusername')
-    input(class = "registerEmail" id = "registerEmail" type='text', placeholder='Email', name='registeremail')
-    input(class = "registerPassword" id = "registerPassword" type='password', placeholder='Password', name='registerpassword')
+    input(class = "registerUsername" id = "registerUsername" type='text', placeholder='Username', name='registerUsername')
+    input(class = "registerEmail" id = "registerEmail" type='text', placeholder='Email', name='registerEmail')
+    input(class = "registerPassword" id = "registerPassword" type='password', placeholder='Password', name='registerPassword')
     a.btn.btn-warning.loginBtn(href='') Register
+#modal-wrapperLogin.modal
+  form.modal-content.animate(action='/login1' method='post') 
+    .imgcontainer
+      span.close(onclick="document.getElementById('modal-wrapperLogin').style.display='none'", title='Close PopUp') &times;
+      img.avatar(src='1.png', alt='Avatar')
+      h1(style='text-align:center') Login
+    input(type='text', placeholder='Username', name='loginUsername')
+    input(type='password', placeholder='Password', name='loginPassword')
+    input(type='submit' value='Login')
+    //- a.btn.btn-warning.loginBtn(href='') Login

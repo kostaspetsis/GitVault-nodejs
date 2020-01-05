@@ -21,7 +21,7 @@ head
     .grid-container {
     display: grid;
     grid-gap: 10px;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: auto 1;
     /* background-color: #2196F3; */
     padding: 10px;
     background-color:rgb(255, 246, 152);
@@ -87,71 +87,74 @@ head
   // Navigation Bar
   include nav.pug
   
-  // Navigation Bar
-  // Login Signup Form
-  #modal-wrapper.modal
-    form.modal-content.animate(action='/action_page.php')
-      .imgcontainer
-        span.close(onclick="document.getElementById('modal-wrapper').style.display='none'", title='Close PopUp') &times;
-        img.avatar(src='1.png', alt='Avatar')
-        h1(style='text-align:center') Login/Register
-      .container
-        input(type='text', placeholder='Username/Email', name='loginusername')
-        input(type='password', placeholder='Password', name='loginpassword')
-        // <button onclick="window.location.href='explore.html';">Login</button>
-        // <input class="loginBtn" type="button" onclick="location.href='explore.html';" value="Login" />
-        a.btn.btn-success.loginBtn(href='') Login
-        input(type='text', placeholder='Username', name='registerusername')
-        input(type='text', placeholder='Email', name='registeremail')
-        input(type='password', placeholder='Password', name='registerpassword')
-        a.btn.btn-warning.loginBtn(href='') Register
-        //
-          <input class="verticallyCenter" type="checkbox" style="margin:26px 30px;"> Remember me
-          <a class="verticallyCenter" href="#" style="text-decoration:none; float:right; margin-right:34px; margin-top:26px;">Forgot Password ?</a>
-  // Login Signup Form
-  // Navigation Bar
+  script.
+    var ProjectGif = "gifs/newgif.gif";
+    var ProjectTitle='Project Title-undefined';
+    var ProjectDescription="Project Description-undefined";
+    var ProjectReadme = "This is a project done in class ECE343 at the University of Thessaly.It had a deadline of 17 November 2019 and it was finished by a team of 2.The code consists of three folders.&apos;src&apos;, &apos;lib&apos;, &apos;include&apos;.It is a big project with thousands of lines.We are trying to add some 3d models and make it load them at runtime.To run it, you need a linux environment with OpenGL and GLUT installed.To compile it, you need g++14.";
+    var Projects = {};
 h1.grid-item My Projects
 .grid-container
-  a(href='/viewProject')
-    .alignHorizontally(style='justify-content: center;')
+  //- a(href='/viewProject')
+  //-   .alignHorizontally(style='justify-content: center;')
+  //-     .grid-item
+  //-       img(src=ProjectGif, alt='this slowpoke moves', width='250/')
+  //-       .grid-info
+  //-         img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
+  //-         p.project_title.alignHorizontally #{ProjectTitle}
+  //-         p.project_description.wrapText #{ProjectDescription}
+  //-     p(style='font-size:30px;color:rgb(31, 31, 31);')
+  //-       | #{ProjectReadme}
+  each key,value in Projects
+    - var gif = key['ProjectGif']
+    - var title = key['ProjectTitle']
+    - var desc = key['ProjectDescription']
+    - var readme = key['ProjectReadme']
+    //- p=gif
+    //- p=title
+    //- p=desc
+    //- p=readme
+
+    a(href='/viewProject')
+    .alignHorizontally(style='justify-content: center;border:2px solid red;')
       .grid-item
-        img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+        img(src=gif, alt='this slowpoke moves', width='250/')
         .grid-info
           img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
-          p.project_title.alignHorizontally Cpp Raytracer
-          p.project_description.wrapText Ray tracer implemented in cpp.
-      p(style='font-size:40px;color:rgb(31, 31, 31);')
-        | This is a project done in class ECE343 at the University of Thessaly.It had a deadline of 17 November 2019 and it was finished by a team of 2.The code consists of three folders.&apos;src&apos;, &apos;lib&apos;, &apos;include&apos;.It is a big project with thousands of lines.We are trying to add some 3d models and make it load them at runtime.To run it, you need a linux environment with OpenGL and GLUT installed.To compile it, you need g++14.
-img.avatar(src='1.png', style='width:400px;height:400px;position:absolute;left:1400px;top:200px;', alt='Avatar')
-.alignH
-  .alignV
-    button.btn.btn-success(style='border:5px solid green;') Like
-    p Like:15
-  .alignV
-    button.btn.btn-danger(style='border:5px solid red;') Dislike
-    p Dislike:2
-.alignV1.comment-section
-  h2 &Sigma;&chi;&#x3CC;&lambda;&iota;&alpha; &chi;&rho;&eta;&sigma;&tau;&#x3CE;&nu;
-  .comment-item
-    .alignH
-      img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
-      p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 1
-    p.user-comment Great project.Can i contribute?
-  .comment-item
-    .alignH
-      img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
-      p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 2
-    p.user-comment Where is the code?
-  .comment-item
-    .alignH
-      img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
-      p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 3
-    p.user-comment I Like it!!!
-  .comment-item
-    .alignH
-      img.avatar(src='Profile2.png', style='width:30px;height:30px;', alt='Avatar')
-      p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 3
-    p.user-comment This is a basic project.:(
+          p.project_title.alignHorizontally=title
+          p.project_description.wrapText=desc
+      p(style='font-size:30px;color:rgb(31, 31, 31);')=readme
+
+ 
+//- .alignH
+//-   .alignV
+//-     button.btn.btn-success(style='border:5px solid green;') Like
+//-     p Like:15
+//-   .alignV
+//-     button.btn.btn-danger(style='border:5px solid red;') Dislike
+//-     p Dislike:2
+//- .alignV1.comment-section
+//-   h2 &Sigma;&chi;&#x3CC;&lambda;&iota;&alpha; &chi;&rho;&eta;&sigma;&tau;&#x3CE;&nu;
+//-   .comment-item
+//-     .alignH
+//-       img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+//-       p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 1
+//-     p.user-comment Great project.Can i contribute?
+//-   .comment-item
+//-     .alignH
+//-       img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+//-       p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 2
+//-     p.user-comment Where is the code?
+//-   .comment-item
+//-     .alignH
+//-       img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
+//-       p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 3
+//-     p.user-comment I Like it!!!
+//-   .comment-item
+//-     .alignH
+//-       img.avatar(src='Profile2.png', style='width:30px;height:30px;', alt='Avatar')
+//-       p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 3
+//-     p.user-comment This is a basic project.:(
 script(src='https://code.jquery.com/jquery-3.4.1.slim.min.js', integrity='sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n', crossorigin='anonymous')
 script(src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js', integrity='sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo', crossorigin='anonymous')
 script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/js/bootstrap.min.js', integrity='sha384-3qaqj0lc6sV/qpzrc1N5DC6i1VRn/HyX4qdPaiEFbn54VjQBEU341pvjz7Dv3n6P', crossorigin='anonymous')

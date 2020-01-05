@@ -54,6 +54,17 @@ class Users{
 		}
 	}
 
+	GetUserById(id){
+		for (let i = 0; i < this.data.length; i++) {
+			const element = this.data[i];
+		
+			if(element.id === id){
+				return element;
+			}
+		}
+		return -1;
+	}
+
 	//Return the UserData by username
 	GetUserByUsername(username){
 		for (let i = 0; i < this.data.length; i++) {
@@ -64,6 +75,7 @@ class Users{
 				console.log("ssssssssssssssssssssssssssssssssssssssssssssdsadasdsada +"+element.username+", "+username);
 			}
 		}
+		console.log("DIDN'T FIND USERNAME "+username);
 		return -1;
 	}
 
