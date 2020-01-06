@@ -330,8 +330,9 @@ app.get('/explore', (req,res) => {
     res.render('index', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 });
 
-app.get('/viewProject', redirectLogin, (req,res) => {
+app.get('/viewProject_id=:id', (req,res) => {
 	var ProjectTitle = "undefined";
+	console.log("id of viewProject["+req.params.id+"]");
 	// var Likes = "undefined";
 	// var Dislikes = "undefined";
 	// var id = 1;
@@ -348,6 +349,7 @@ app.get('/viewProject', redirectLogin, (req,res) => {
     	// Likes:Likes,
     	// Dislikes:Dislikes
 	});
+	
 	// res.send('HelloWorld');
 });
 

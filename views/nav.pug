@@ -2,6 +2,8 @@ script.
   function Login(){
     window.location.href += 'login/'+document.getElementById('loginUsername').value + '/' +document.getElementById('loginPassword').value;
   };
+  var authorized = true;
+  var ProfilePicture = '1.png';
 // Navigation Bar
 nav.navbar.navbar-expand-md.navbar-dark.sticky-top
   // <a class="navbar-brand" href="index.html" style="color:rgb(47, 255, 203);">GitVault</a>
@@ -21,14 +23,10 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
       li.nav-item
         a.nav-link(href='/guide') Guide
     ul.nav.navbar-nav.ml-auto
-      script.
-        var authorized = true;
-        var ProfilePicture = '1.png';
-        //- var ptag = '!{ptag}';
-      //- if ptag == "dsdasd"
-      //-   h1 #{ptag}
-      //- else
-      //-   h1 ptag
+      //- script.
+      //-   var authorized = true;
+      //-   var ProfilePicture = '1.png';
+      
       if authorized == false
         li.nav-item
           // <a class="nav-link" href="#"><span class="fas fa-user"></span> Sign Up</a>
