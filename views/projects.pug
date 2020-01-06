@@ -93,6 +93,7 @@ head
     var ProjectDescription="Project Description-undefined";
     var ProjectReadme = "This is a project done in class ECE343 at the University of Thessaly.It had a deadline of 17 November 2019 and it was finished by a team of 2.The code consists of three folders.&apos;src&apos;, &apos;lib&apos;, &apos;include&apos;.It is a big project with thousands of lines.We are trying to add some 3d models and make it load them at runtime.To run it, you need a linux environment with OpenGL and GLUT installed.To compile it, you need g++14.";
     var Projects = {};
+    var ProjectId;
 h1.grid-item My Projects
 .grid-container
   //- a(href='/viewProject')
@@ -110,20 +111,21 @@ h1.grid-item My Projects
     - var title = key['ProjectTitle']
     - var desc = key['ProjectDescription']
     - var readme = key['ProjectReadme']
+    
     //- p=gif
     //- p=title
     //- p=desc
     //- p=readme
-
-    a(href='/viewProject')
-    .alignHorizontally(style='justify-content: center;border:2px solid red;')
-      .grid-item
-        img(src=gif, alt='this slowpoke moves', width='250/')
-        .grid-info
-          img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
-          p.project_title.alignHorizontally=title
-          p.project_description.wrapText=desc
-      p(style='font-size:30px;color:rgb(31, 31, 31);')=readme
+    h1=ProjectId
+    a(href='/viewProject/' + ProjectId)
+      .alignHorizontally(style='justify-content: center;border:2px solid red;')
+        .grid-item
+          img(src=gif, alt='this slowpoke moves', width='250/')
+          .grid-info
+            img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
+            p.project_title.alignHorizontally=title
+            p.project_description.wrapText=desc
+        p(style='font-size:30px;color:rgb(31, 31, 31);')=readme
 
  
 //- .alignH

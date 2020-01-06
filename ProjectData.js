@@ -7,6 +7,7 @@ class ProjectData{
 				likes,
 				dislikes,
 				comments){
+		this.title = title;
 		this.project_path = project_path; 
 		this.video_path = video_path; 
 		this.id = id; 

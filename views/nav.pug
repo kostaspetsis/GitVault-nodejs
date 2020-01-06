@@ -23,6 +23,7 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
     ul.nav.navbar-nav.ml-auto
       script.
         var authorized = true;
+        var ProfilePicture = '1.png';
         //- var ptag = '!{ptag}';
       //- if ptag == "dsdasd"
       //-   h1 #{ptag}
@@ -36,7 +37,7 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
           // <a class="nav-link" href="#"><span class="fas fa-sign-in-alt"></span> Login</a>
           a.login(onclick="document.getElementById('modal-wrapperLogin').style.display='block'") Login
       else if authorized == true
-        img.avatar(src='1.png', alt='Avatar')
+        img.avatar(src=ProfilePicture, alt='Avatar')
         form(action='/logout' method='post')
           input(type='submit' value='Logout')
       else

@@ -41,8 +41,10 @@ const Users = require('./Users.js');
 //DB sync
 var ProjectData = require('./ProjectData.js');
 var Projects = require('./Projects.js');
+var Comment = require('./Comment.js');
 var DbUsers = null;
 var DbProjects = null;
+
 
 function CreateNewProject(title,project_path,video_path,from_user){
 	var projId = DbProjects.length+1;
@@ -121,8 +123,9 @@ function GitRequest(req,res){
 
 function ConnectToDatabase(){
 	DbUsers = new Users();
-	var ref = database.ref('user');
-	ref.on("value",(data)=>{
+	DbProjects = new Projects();
+	var refUser = database.ref('user');
+	refUser.on("value",(data)=>{
 		var users = data.val();
 		var keys = Object.keys(users);
 		// globalUsernames = [];
@@ -156,6 +159,71 @@ function ConnectToDatabase(){
 	},(error)=>{
 		console.log("[ConnectToDatabase]:"+error);
 	});
+	var refProjects = database.ref("projects");
+	refProjects.on("value", (data) => {
+		var projects = data.val();
+		var keys = Object.keys(projects);
+		DbProjects.Reset();
+		for(var i = 0; i < keys.length; i++){
+			var title = projects[keys[i]].title;
+			var project_path = projects[keys[i]].project_path;
+			var video_path = projects[keys[i]].video_path;
+			var id = projects[keys[i]].id;
+			var from_user = projects[keys[i]].from_user;
+			var likes = projects[keys[i]].likes;
+			var dislikes = projects[keys[i]].dislikes;
+			var commentsKeys = Object.keys(projects[keys[i]].comments);
+			var comments = [];
+			for(var ci = 0; ci < commentsKeys.length; ci++){
+				var comment = new Comment(
+					projects[keys[i]].comments[commentsKeys[ci]]["Text"],
+					projects[keys[i]].comments[commentsKeys[ci]]["date"],
+					projects[keys[i]].comments[commentsKeys[ci]]["from_user"],
+					projects[keys[i]].comments[commentsKeys[ci]]["time"]
+				);
+				comments.push(comment);
+			}
+			var projectData = new ProjectData(
+				title,
+				project_path,
+				video_path,
+				id,
+				from_user,
+				likes,
+				dislikes,
+				comments
+			);
+			DbProjects.AddProject(projectData);
+		}
+	},(error)=>{
+		console.log("[ConnectToDatabase-Projects]:"+error);
+	});
+	// var comment = new Comment(
+	// 	"This is a comment",
+	// 	"2 October 2019",
+	// 	"username1",
+	// 	"09:09"
+	// );
+	// var projectReference = database.ref('projects').push({
+	// 	title:"TestProject2",
+	// 	project_path:"/home/server/repos/bares/",
+	// 	video_path:"/home/server/videos/",
+	// 	id:1,
+	// 	from_user:"kappa",
+	// 	likes:3,
+	// 	dislikes:2,
+	// 	// comments:{Text:"none",date:"none",from_user:"none",time:"none"}
+	// });
+	// if(projectReference){
+	// 	console.log("There is a reference");
+	// 	console.log(projectReference);
+	// 	database.ref('projects/'+projectReference['path']['pieces_'][1] + "/comments").push({
+	// 			Text:comment.Text,
+	// 			date:comment.date,
+	// 			from_user:comment.from_user,
+	// 			time:comment.time,
+	// 		});
+	// }
 }
 
 const redirectLogin = (req, res, next) => {
@@ -173,7 +241,9 @@ function isUserAuthorized(req){
 app.get('/', (req,res)=>{
 console.log("Mpike edw -> /");
 	// GitRequest(req,res);
-    res.render('index', {authorized:isUserAuthorized(req)});
+	res.redirect('explore');
+	DbProjects.Serialize();
+    // res.render('index', {authorized:isUserAuthorized(req)});
 	// res.render('index', {authorized:true});
 });
 
@@ -257,18 +327,34 @@ app.get('/register/:username/:password/:email', (req,res) =>{
 
 app.get('/explore', (req,res) => {
 	console.log(req.session.userId);
-    res.render('index', {authorized:isUserAuthorized(req)});
+    res.render('index', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 });
 
-app.get('/viewProject', (req,res) => {
-	res.render('viewProject', {authorized:isUserAuthorized(req)});
+app.get('/viewProject', redirectLogin, (req,res) => {
+	var ProjectTitle = "undefined";
+	// var Likes = "undefined";
+	// var Dislikes = "undefined";
+	// var id = 1;
+	// var project = DbProjects.GetProjectById(id);
+	// console.log("project id = "+id);
+	// if(project !== -1){
+	// 	ProjectTitle = project.title;
+	// 	Likes = project.likes;
+	// 	Dislikes = project.dislikes;
+	// }
+	// console.log(ProjectTitle,Likes,Dislikes);
+	res.render('viewProject', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg',
+		ProjectTitle:ProjectTitle,
+    	// Likes:Likes,
+    	// Dislikes:Dislikes
+	});
 	// res.send('HelloWorld');
 });
 
 
 
 app.get('/upload', redirectLogin, (req,res) => {
-	res.render('upload', {authorized:isUserAuthorized(req)});
+	res.render('upload', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 	// res.send('HelloWorld');
 });
 
@@ -284,14 +370,14 @@ app.get('/profile', redirectLogin, (req,res) => {
 		password = user.password;
 		email = user.email;
 	}
-	res.render('profile', {authorized:isUserAuthorized(req), username:username, password:password, email:email});
+	res.render('profile', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg', username:username, password:password, email:email});
 	// res.send('HelloWorld');
 });
 
 
 app.get('/projects', redirectLogin, (req,res) => {
 	var Projects = [];
-	
+	var id = 1;
 	for (let i = 0; i < 4; i++) {
 		var Project = {};
 		Project["ProjectTitle"] = "Title" + i;
@@ -303,6 +389,8 @@ app.get('/projects', redirectLogin, (req,res) => {
 	
 	res.render('projects', {
 		authorized:isUserAuthorized(req),
+		ProjectId:id,
+		ProfilePicture:'Profile1.jpeg',
 		ProjectGif:"gifs/newgif.gif",
 		ProjectTitle:"Project Title",
 		ProjectDescription:"Project Description",
@@ -314,7 +402,7 @@ app.get('/projects', redirectLogin, (req,res) => {
 
 
 app.get('/guide', (req,res) => {
-	res.render('guide', {authorized:isUserAuthorized(req)});
+	res.render('guide', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 	// res.send('HelloWorld');
 });
 
