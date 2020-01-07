@@ -446,25 +446,32 @@ app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
 	console.log(directoryPath);
 
 	let exec = require('child_process').execSync;
-	exec('mkdir '+FolderToSaveBares+projNameWithoutDotZip+'.git', (error, stdout, stderr) => {
-		console.log('Made a folder at ' + FolderToSaveBares+projNameWithoutDotZip+'.git');
-	});
-	exec('git init --bare '+FolderToSaveBares+projNameWithoutDotZip+'.git', (error, stdout, stderr) => {
-		console.log("Exec'd "+'git init --bare '+FolderToSaveBares+projNameWithoutDotZip);
-	});
-	exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' add -A', (error, stdout, stderr) => {
-		console.log("Exec'd "+'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' add -A');
-	});
-	exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' commit -m '+'"initial commit"', (error, stdout, stderr) => {
-		console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' commit -m '+'"initial commit"');
-	});
-	exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' remote add '+FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master', (error, stdout, stderr) => {
-		console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' remote add '+FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master');
-	});
-	exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push origin master', (error, stdout, stderr) => {
-		console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push origin master');
-	});
+	// exec('mkdir '+FolderToSaveBares+projNameWithoutDotZip+'.git', (error, stdout, stderr) => {
+	// 	console.log('Made a folder at ' + FolderToSaveBares+projNameWithoutDotZip+'.git');
+	// });
+	// exec('git init --bare '+FolderToSaveBares+projNameWithoutDotZip+'.git', (error, stdout, stderr) => {
+	// 	console.log("Exec'd "+'git init --bare '+FolderToSaveBares+projNameWithoutDotZip);
+	// });
+	// exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' add -A', (error, stdout, stderr) => {
+	// 	console.log("Exec'd "+'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' add -A');
+	// });
+	// exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' commit -m '+'"initial commit"', (error, stdout, stderr) => {
+	// 	console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' commit -m '+'"initial commit"');
+	// });
+	// // exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' remote add '+FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master', (error, stdout, stderr) => {
+	// // 	console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' remote add '+FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master');
+	// // });
+	// exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push ' + FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master', (error, stdout, stderr) => {
+	// 	console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push ' + FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master');
+	// });
+	exec('mkdir '+FolderToSaveBares+projNameWithoutDotZip+'.git;'+
+	'git init --bare '+FolderToSaveBares+projNameWithoutDotZip+'.git;'+
+	'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' add -A;'+
+	'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' commit -m '+'"initial commit";'+
+	'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push ' + FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master' , (error,stdout,stderr) => {});
 	
+
+
 	  //passsing directoryPath and callback function
 	  fs.readdir(directoryPath, function (err, files) {
 		  var fileNames = "Filenames are =";
