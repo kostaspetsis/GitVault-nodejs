@@ -438,12 +438,33 @@ app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
 
 	var fileNames = "Filenames are=";
 	var zip = new admzip(FolderToSaveZips + file.originalname);
-	zip.extractAllTo(FolderToSaveBares, true);
+	zip.extractAllTo(FolderToSaveNonBares, true);
 	 
-	  //joining path of directory 
-	  var directoryPath = path.join(__dirname, FolderToSaveBares+
-					file.originalname.substring(0,file.originalname.indexOf('.')) );
+	var projNameWithoutDotZip = file.originalname.substring(0,file.originalname.indexOf('.'));
+	//joining path of directory
+	var directoryPath = path.join(__dirname, FolderToSaveNonBares+projNameWithoutDotZip);
 	console.log(directoryPath);
+
+	let exec = require('child_process').execSync;
+	exec('mkdir '+FolderToSaveBares+projNameWithoutDotZip+'.git', (error, stdout, stderr) => {
+		console.log('Made a folder at ' + FolderToSaveBares+projNameWithoutDotZip+'.git');
+	});
+	exec('git init --bare '+FolderToSaveBares+projNameWithoutDotZip+'.git', (error, stdout, stderr) => {
+		console.log("Exec'd "+'git init --bare '+FolderToSaveBares+projNameWithoutDotZip);
+	});
+	exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' add -A', (error, stdout, stderr) => {
+		console.log("Exec'd "+'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' add -A');
+	});
+	exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' commit -m '+'"initial commit"', (error, stdout, stderr) => {
+		console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' commit -m '+'"initial commit"');
+	});
+	exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' remote add '+FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master', (error, stdout, stderr) => {
+		console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' remote add '+FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master');
+	});
+	exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push origin master', (error, stdout, stderr) => {
+		console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push origin master');
+	});
+	
 	  //passsing directoryPath and callback function
 	  fs.readdir(directoryPath, function (err, files) {
 		  var fileNames = "Filenames are =";
@@ -652,7 +673,7 @@ function BasicAuth(req,res){
 			// req.pipe(b).pipe(res);
 			// var sb = b.createBand();
 			var repo = req.url.split('/')[1];
-			var dir = path.join(__dirname, 'repos', repo);
+			var dir = path.join(__dirname, 'repos/bares/', repo);
 			var reqStream = req.headers['content-encoding'] == 'gzip' ? req.pipe(zlib.createGunzip()) : req;
 			// sb.write("dsds");
 			console.log("Enwmenoi");
