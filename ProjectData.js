@@ -6,7 +6,8 @@ class ProjectData{
 				from_user,
 				likes,
 				dislikes,
-				comments){
+				comments,
+				database_path){
 		this.title = title;
 		this.project_path = project_path; 
 		this.video_path = video_path; 
@@ -15,6 +16,7 @@ class ProjectData{
 		this.likes = likes; 
 		this.dislikes = dislikes; 
 		this.comments = comments; 
+		this.database_path = database_path;
 	}
 };
 module.exports = ProjectData;

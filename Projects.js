@@ -24,7 +24,8 @@ class Projects{
 			"from_user:" + this.data[i].from_user+"\n",
 			"likes:" + this.data[i].likes+"\n",
 			"dislikes:" + this.data[i].dislikes+"\n",
-			"comments:" + commentsSerialized+"\n");
+			"comments:" + commentsSerialized+"\n",
+			"database_path:" + this.data[i].database_path+"\n");
 		}
 	}
 

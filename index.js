@@ -172,6 +172,7 @@ function ConnectToDatabase(){
 			var from_user = projects[keys[i]].from_user;
 			var likes = projects[keys[i]].likes;
 			var dislikes = projects[keys[i]].dislikes;
+			var database_path = projects[keys[i]].database_path;
 			var commentsKeys = Object.keys(projects[keys[i]].comments);
 			var comments = [];
 			for(var ci = 0; ci < commentsKeys.length; ci++){
@@ -191,7 +192,8 @@ function ConnectToDatabase(){
 				from_user,
 				likes,
 				dislikes,
-				comments
+				comments,
+				database_path
 			);
 			DbProjects.AddProject(projectData);
 		}
@@ -331,9 +333,28 @@ app.get('/explore', (req,res) => {
     res.render('index', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 });
 
-app.get('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
+app.post('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
 	var ProjectId = req.params.ProjectId;
-	res.redirect('/viewProject_id='+Projectid);
+	var project = DbProjects.GetProjectById(ProjectId);
+	const {commentText} = req.body;
+	var dateInfo = new Date();
+	var commentDate = dateInfo.toISOString().slice(0,10);
+	var commentTime = dateInfo.toISOString().slice(11,16);
+	if(project != -1) {
+
+		database.ref('projects/'+project.database_path+'/comments').push({
+			Text : commentText,
+			date : commentDate,
+			from_user : DbUsers.GetUserById(req.session.userId).username,
+			time : commentTime
+		});
+	}
+
+	res.redirect('/viewProject_id='+ProjectId);
+});
+// How can i clone this project to my personal computer?What is the terminal command?
+app.get('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
+	res.redirect('/viewProject_id='+ProjectId);
 });
 
 app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
@@ -363,6 +384,7 @@ app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 	}
 	// console.log(ProjectTitle,Likes,Dislikes);
 	res.render('viewProject', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg',
+		ProjectId:req.session.userId,
 		ProjectTitle:ProjectTitle,
     	Likes:Likes,
 		Dislikes:Dislikes,
