@@ -2,8 +2,9 @@ script.
   function Login(){
     window.location.href += 'login/'+document.getElementById('loginUsername').value + '/' +document.getElementById('loginPassword').value;
   };
-  var authorized = true;
+  var authorized;
   var ProfilePicture = '1.png';
+  var UserId;
 // Navigation Bar
 nav.navbar.navbar-expand-md.navbar-dark.sticky-top
   // <a class="navbar-brand" href="index.html" style="color:rgb(47, 255, 203);">GitVault</a>
@@ -19,7 +20,7 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
       li.nav-item
         a.nav-link(href='/profile') Profile
       li.nav-item
-        a.nav-link(href='/projects') Projects
+        a.nav-link(href='/projects_id=' + UserId) Projects
       li.nav-item
         a.nav-link(href='/guide') Guide
     ul.nav.navbar-nav.ml-auto
@@ -27,14 +28,14 @@ nav.navbar.navbar-expand-md.navbar-dark.sticky-top
       //-   var authorized = true;
       //-   var ProfilePicture = '1.png';
       
-      if authorized == false
+      if authorized === false
         li.nav-item
           // <a class="nav-link" href="#"><span class="fas fa-user"></span> Sign Up</a>
           a.login(onclick="document.getElementById('modal-wrapperRegister').style.display='block'") Sign Up
         li.nav-item
           // <a class="nav-link" href="#"><span class="fas fa-sign-in-alt"></span> Login</a>
           a.login(onclick="document.getElementById('modal-wrapperLogin').style.display='block'") Login
-      else if authorized == true
+      else if authorized===true
         img.avatar(src=ProfilePicture, alt='Avatar')
         form(action='/logout' method='post')
           input(type='submit' value='Logout')

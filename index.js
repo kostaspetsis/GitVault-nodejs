@@ -46,34 +46,34 @@ var DbUsers = null;
 var DbProjects = null;
 
 
-function CreateNewProject(title,project_path,video_path,from_user){
-	var projId = DbProjects.length+1;
-	var Project = new ProjectData({
-		title:title,
-		project_path:project_path,
-		video_path:video_path,
-		from_user:from_user,
-		id:projId,
-		likes:0,
-		dislikes:0,
-		comments:[]
-	});
-	// DbProjects.push(Project);
-	return Project;
-}
+// function CreateNewProject(title,project_path,video_path,from_user){
+// 	var projId = DbProjects.length+1;
+// 	var Project = new ProjectData({
+// 		title:title,
+// 		project_path:project_path,
+// 		video_path:video_path,
+// 		from_user:from_user,
+// 		id:projId,
+// 		likes:0,
+// 		dislikes:0,
+// 		comments:[]
+// 	});
+// 	// DbProjects.push(Project);
+// 	return Project;
+// }
 
-function FillProjectData(id, likes,dislikes,comments){
-	for (let i = 0; i < DbProjects.length; i++) {
-		const element = DbProjects[i];
-		var Project = element;
-		if( Project.id === id){
-			Project.likes = likes;
-			Project.dislikes = dislikes;
-			Project.comments = comments;
-			break;
-		}
-	}
-}
+// function FillProjectData(id, likes,dislikes,comments){
+// 	for (let i = 0; i < DbProjects.length; i++) {
+// 		const element = DbProjects[i];
+// 		var Project = element;
+// 		if( Project.id === id){
+// 			Project.likes = likes;
+// 			Project.dislikes = dislikes;
+// 			Project.comments = comments;
+// 			break;
+// 		}
+// 	}
+// }
 
 
 // Add this line below
@@ -236,6 +236,7 @@ const redirectLogin = (req, res, next) => {
 
 function isUserAuthorized(req){
 	return (req.session.userId)?true:false;
+	// return req.session.userId;
 }
 
 app.get('/', (req,res)=>{
@@ -327,27 +328,45 @@ app.get('/register/:username/:password/:email', (req,res) =>{
 
 app.get('/explore', (req,res) => {
 	console.log(req.session.userId);
-    res.render('index', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
+    res.render('index', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 });
 
-app.get('/viewProject_id=:id', (req,res) => {
+app.get('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
+	var ProjectId = req.params.ProjectId;
+	res.redirect('/viewProject_id='+Projectid);
+});
+
+app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 	var ProjectTitle = "undefined";
 	console.log("id of viewProject["+req.params.id+"]");
-	// var Likes = "undefined";
-	// var Dislikes = "undefined";
-	// var id = 1;
-	// var project = DbProjects.GetProjectById(id);
-	// console.log("project id = "+id);
-	// if(project !== -1){
-	// 	ProjectTitle = project.title;
-	// 	Likes = project.likes;
-	// 	Dislikes = project.dislikes;
-	// }
+	var Likes = "undefined";
+	var Dislikes = "undefined";
+	var Comments = [];
+	var id = req.params.id;
+	var project = DbProjects.GetProjectById(id);
+	console.log("project id = "+id);
+	if(project !== -1){
+		ProjectTitle = project.title;
+		Likes = project.likes;
+		Dislikes = project.dislikes;
+		for(var i = 0; i < project.comments.length; i++){
+			const element = project.comments[i];
+			var Comment = {};
+			Comment["Text"] = element.Text;
+			Comment["date"] = element.date;
+			Comment["from_user"] = element.from_user;
+			Comment["time"] = element.time;
+			Comments.push(Comment);
+		}
+	}else{
+		console.log("No such project with id["+id+"]");
+	}
 	// console.log(ProjectTitle,Likes,Dislikes);
-	res.render('viewProject', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg',
+	res.render('viewProject', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg',
 		ProjectTitle:ProjectTitle,
-    	// Likes:Likes,
-    	// Dislikes:Dislikes
+    	Likes:Likes,
+		Dislikes:Dislikes,
+		Comments:Comments
 	});
 	
 	// res.send('HelloWorld');
@@ -356,7 +375,7 @@ app.get('/viewProject_id=:id', (req,res) => {
 
 
 app.get('/upload', redirectLogin, (req,res) => {
-	res.render('upload', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
+	res.render('upload', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 	// res.send('HelloWorld');
 });
 
@@ -372,39 +391,64 @@ app.get('/profile', redirectLogin, (req,res) => {
 		password = user.password;
 		email = user.email;
 	}
-	res.render('profile', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg', username:username, password:password, email:email});
+	res.render('profile', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg', username:username, password:password, email:email});
 	// res.send('HelloWorld');
 });
 
 
-app.get('/projects', redirectLogin, (req,res) => {
-	var Projects = [];
-	var id = 1;
-	for (let i = 0; i < 4; i++) {
-		var Project = {};
-		Project["ProjectTitle"] = "Title" + i;
-		Project["ProjectDescription"] = "Description" + i;
-		Project["ProjectReadme"] = "Readme" + i;
-		Project["ProjectGif"] = "gifs/newgif.gif";
-		Projects.push(Project);
+app.get('/projects_id=:id', (req,res) => {
+	var userId = req.params.id;
+	console.log("userId="+userId);
+	var user = DbUsers.GetUserById(userId);
+	var UserProjects = [];
+	if( user !== -1){//Valid user
+		var project_ids = user.project_ids;//Get project ids of the user
+		for (let i = 0; i < project_ids.length; i++) {
+			const proj_id = project_ids[i];
+			if (proj_id == -1){
+				break;
+			}
+			var project = DbProjects.GetProjectById(proj_id);
+			if( project != -1){//Valid project
+				var UserProject = {};
+				UserProject["ProjectTitle"] = project.title;
+				UserProject["ProjectDescription"] = "TODO-ProjectDescription";
+				UserProject["ProjectReadme"] = "TODO-ProjectReadme";
+				UserProject["ProjectGif"] = project.video_path;
+				UserProject["ProjectId"] = project.id;
+				UserProjects.push(UserProject);
+			}
+		}
+	}else{
+		console.log("No user with id "+userId);
 	}
+	// var Projects = [];
+	
+	// for (let i = 0; i < 4; i++) {
+	// 	var Project = {};
+	// 	Project["ProjectTitle"] = "Title" + i;
+	// 	Project["ProjectDescription"] = "Description" + i;
+	// 	Project["ProjectReadme"] = "Readme" + i;
+	// 	Project["ProjectGif"] = "gifs/newgif.gif";
+	// 	Projects.push(Project);
+	// }
 	
 	res.render('projects', {
+		UserId:userId,
 		authorized:isUserAuthorized(req),
-		ProjectId:id,
 		ProfilePicture:'Profile1.jpeg',
 		ProjectGif:"gifs/newgif.gif",
 		ProjectTitle:"Project Title",
 		ProjectDescription:"Project Description",
 		ProjectReadme:"Project Readme",
-		Projects:Projects
+		Projects:UserProjects
 	});
 	// res.send('HelloWorld');
 });
 
 
 app.get('/guide', (req,res) => {
-	res.render('guide', {authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
+	res.render('guide', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 	// res.send('HelloWorld');
 });
 

@@ -28,11 +28,27 @@ p {
 	word-wrap: break-word;
 }
 
+.nowrapText{
+	overflow: hidden;
+	/* text-overflow: ellipsis; */
+	white-space: nowrap;
+}
+
 .alignH{
 	display:flex; 
 	flex-direction: row; 
 	justify-content: center;
 	align-items: center;
+}
+
+.alignLeft{
+	display:flex; 
+	flex-direction: row; 
+	justify-content: center;
+	align-items: left;
+	text-align: left;
+	padding:0px;
+	border:2px solid red;
 }
 
 .alignV{

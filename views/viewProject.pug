@@ -12,6 +12,12 @@ head
   link(rel='stylesheet', type='text/css', media='screen', href='main.css')
   script(src='main.js')
   script(src='http://code.jquery.com/jquery-2.1.4.min.js')
+  script.
+    var ProjectTitle;
+    var ProjectId;
+    var	Likes;
+    var	Dislikes;
+    var Comments;
   style.
     #projectStructure{
     list-style: none;
@@ -36,7 +42,7 @@ head
     color:white;
     }
     .comment-section{
-    background-color:plum;
+    background-color:#FFE788/*plum*/;
     padding-top:50px;
     padding-left:10px;
     border:2px solid rgb(212, 101, 212);
@@ -85,32 +91,49 @@ ul#projectStructure
 .alignH
   .alignV
     button.btn.btn-success(style='border:5px solid green;') Like
-    p Like:15
+    p Like:#{Likes}
   .alignV
     button.btn.btn-danger(style='border:5px solid red;') Dislike
-    p Dislike:2
+    p Dislike:#{Dislikes}
 .alignV1.comment-section
   h2 &Sigma;&chi;&#x3CC;&lambda;&iota;&alpha; &chi;&rho;&eta;&sigma;&tau;&#x3CE;&nu;
-  .comment-item
-    .alignH
-      img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
-      p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 1
-    p.user-comment Great project.Can i contribute?
-  .comment-item
-    .alignH
-      img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
-      p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 2
-    p.user-comment Where is the code?
-  .comment-item
-    .alignH
-      img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
-      p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 3
-    p.user-comment I Like it!!!
-  .comment-item
-    .alignH
-      img.avatar(src='Profile2.png', style='width:30px;height:30px;', alt='Avatar')
-      p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 3
-    p.user-comment This is a basic project.:(
+  each key,value in Comments
+    - var Text = key['Text']
+    - var date = key['date']
+    - var from_user = key['from_user']
+    - var time = key['time']
+    .comment-item
+      .alignH
+        img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+        p.user-name(style="padding:auto;width:auto;")=from_user
+          p(style="padding:auto;border:2px solid red;color:rgb(80,80,80);")=date
+          p(style="padding:auto;color:rgb(30,30,30);")=time
+      p.user-comment=Text
+  
+  //- h2 &Sigma;&chi;&#x3CC;&lambda;&iota;&alpha; &chi;&rho;&eta;&sigma;&tau;&#x3CE;&nu;
+  //- .comment-item
+  //-   .alignH
+  //-     img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+  //-     p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 1
+  //-   p.user-comment Great project.Can i contribute?
+  //- .comment-item
+  //-   .alignH
+  //-     img.avatar(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+  //-     p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 2
+  //-   p.user-comment Where is the code?
+  //- .comment-item
+  //-   .alignH
+  //-     img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
+  //-     p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 3
+  //-   p.user-comment I Like it!!!
+  //- .comment-item
+  //-   .alignH
+  //-     img.avatar(src='Profile2.png', style='width:30px;height:30px;', alt='Avatar')
+  //-     p.user-name &Chi;&rho;&#x3AE;&sigma;&tau;&eta;&sigmaf; 3
+  //-   p.user-comment This is a basic project.:(
+form(method="post" action="/post_comment_id=" + ProjectId)
+  input(type="text" name="commentText")
+  input(type="submit" value="Comment" name="commentSubmit")
 script(src='https://code.jquery.com/jquery-3.2.1.min.js')
 script(src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js', integrity='sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo', crossorigin='anonymous')
 script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/js/bootstrap.min.js', integrity='sha384-3qaqj0lc6sV/qpzrc1N5DC6i1VRn/HyX4qdPaiEFbn54VjQBEU341pvjz7Dv3n6P', crossorigin='anonymous')

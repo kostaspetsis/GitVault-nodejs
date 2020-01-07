@@ -30,8 +30,10 @@ class Projects{
 
 	GetProjectById(id){
 		for(var i = 0; i < this.data.length; i++){
-			if (this.data[i].id === id){
+			if (this.data[i].id == id){
 				return this.data[i];
+			}else{
+				console.log("id is '"+this.data[i].id+"' and parameterid = '" + id+"'");
 			}
 		}
 		return -1;

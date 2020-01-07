@@ -58,7 +58,7 @@ class Users{
 		for (let i = 0; i < this.data.length; i++) {
 			const element = this.data[i];
 		
-			if(element.id === id){
+			if(element.id == id){
 				return element;
 			}
 		}
