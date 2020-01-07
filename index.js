@@ -22,6 +22,8 @@ const app = express();
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
+
+//Database
 const firebase = require('firebase');
 var firebaseApp = firebase.initializeApp({
 	apiKey: "AIzaSyDrjgnOgtKmQ1XfmW8RjmnSxda1685-Yik",
@@ -45,6 +47,30 @@ var Comment = require('./Comment.js');
 var DbUsers = null;
 var DbProjects = null;
 
+//UploadFile
+var multer = require('multer');
+var path = require('path');
+var fs = require('fs');
+var admzip = require('adm-zip');
+// var unzip = require('unzip');
+
+var UploadPinName = 'file';
+var FolderToSaveBares = 'repos/bares/';
+var FolderToSaveNonBares = 'repos/non-bares/';
+var FolderToSaveZips = 'repos/zips/';
+
+// SET STORAGE
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, FolderToSaveZips)
+  },
+  filename: function (req, file, cb) {
+//    cb(null, file.fieldname + '-' + Date.now())
+    cb(null, file.originalname)// + '-' + Date.now())
+  }
+});
+ 
+var upload = multer({ storage: storage });
 
 // function CreateNewProject(title,project_path,video_path,from_user){
 // 	var projId = DbProjects.length+1;
@@ -396,10 +422,47 @@ app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 
 
 
-app.get('/upload', redirectLogin, (req,res) => {
+app.get('/upload', (req,res) => {
 	res.render('upload', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 	// res.send('HelloWorld');
 });
+
+app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
+	const file = req.file
+	if (!file) {
+	  const error = new Error('Please upload a file')
+	  error.httpStatusCode = 400
+	  return next(error)
+	}
+
+
+	var fileNames = "Filenames are=";
+	var zip = new admzip(FolderToSaveZips + file.originalname);
+	zip.extractAllTo(FolderToSaveBares, true);
+	 
+	  //joining path of directory 
+	  var directoryPath = path.join(__dirname, FolderToSaveBares+
+					file.originalname.substring(0,file.originalname.indexOf('.')) );
+	console.log(directoryPath);
+	  //passsing directoryPath and callback function
+	  fs.readdir(directoryPath, function (err, files) {
+		  var fileNames = "Filenames are =";
+	  
+		  //handling error
+		  if (err) {
+			  return console.log('Unable to scan directory: ' + err);
+		  } 
+		  //listing all files using forEach
+		  files.forEach(function (file) {
+			  // Do whatever you want to do with the file
+			  console.log(file); 
+			  fileNames += file + "\n";
+		  });
+		//   res.send("<h1>"+fileNames+"</h1");
+	  });
+	  res.render('upload', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
+});
+  
 
 
 app.get('/profile', redirectLogin, (req,res) => {
