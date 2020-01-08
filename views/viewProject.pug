@@ -22,6 +22,7 @@ head
     var Structure2;
     var StructureLinks;
     var CurrPath;
+    var projectIsMine;
   style.
     #projectStructure{
     list-style: none;
@@ -76,6 +77,13 @@ head
   
   include nav.pug
   
+if projectIsMine == true
+  form(enctype="multipart/form-data", method="POST", action="/uploadvideo_projectid="+ProjectId)
+    input(type='file', name="file", value="Browse video")
+    input(type='submit', value="Upload")
+else
+  h1 No file uploader?
+  h1=projectIsMine
 h1(name="CurrentPath" value=CurrPath)
 .projectInfo
   img.avatar.alignHorizontally(src='Profile1.jpeg', style='width:50px;height:50px;', alt='Avatar')

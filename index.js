@@ -59,7 +59,7 @@ var UploadPinName = 'file';
 var FolderToSaveBares = '/home/kostas/Documents/repos/bares/';
 var FolderToSaveNonBares = '/home/kostas/Documents/repos/non-bares/';
 var FolderToSaveZips = '/home/kostas/Documents/repos/zips/';
-var FolderToSaveVideos='/home/kostas/Documents/repos/videos/';
+var FolderToSaveVideos='./public/videos/';
 // SET STORAGE
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -70,9 +70,20 @@ var storage = multer.diskStorage({
     cb(null, file.originalname)// + '-' + Date.now())
   }
 });
- 
-var upload = multer({ storage: storage });
+var multerVideo = require('multer');
+var storageVideo = multerVideo.diskStorage({
+	destination: function (req, file, cb) {
+	  cb(null, FolderToSaveVideos)
+	},
+	filename: function (req, file, cb) {
+  //    cb(null, file.fieldname + '-' + Date.now())
+	  cb(null, file.originalname)// + '-' + Date.now())
+	}
+});
+  
 
+var upload = multer({ storage: storage });
+var uploadVideo = multerVideo({storage:storageVideo});
 // function CreateNewProject(title,project_path,video_path,from_user){
 // 	var projId = DbProjects.length+1;
 // 	var Project = new ProjectData({
@@ -203,6 +214,8 @@ function ConnectToDatabase(){
 			var database_path = projects[keys[i]].database_path;
 			var commentsKeys = Object.keys(projects[keys[i]].comments);
 			var comments = [];
+			var readme = projects[keys[i]].readme;
+			var description = projects[keys[i]].description;
 			for(var ci = 0; ci < commentsKeys.length; ci++){
 				var comment = new Comment(
 					projects[keys[i]].comments[commentsKeys[ci]]["Text"],
@@ -221,7 +234,9 @@ function ConnectToDatabase(){
 				likes,
 				dislikes,
 				comments,
-				database_path
+				database_path,
+				readme,
+				description
 			);
 			DbProjects.AddProject(projectData);
 		}
@@ -366,7 +381,19 @@ app.get('/register/:username/:password/:email', (req,res) =>{
 
 app.get('/explore', (req,res) => {
 	console.log(req.session.userId);
-    res.render('index', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
+	var Projects = [];
+	for (let i = 0; i < DbProjects.data.length; i++) {
+		const element = DbProjects.data[i];
+		var Project = {};
+		Project['title'] = element.title;
+		Project['id'] = element.id;
+		Project['video_path'] = element.video_path;
+		Project['description'] = element.description;
+		Projects.push(Project);
+	}
+	res.render('index', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg',
+		Projects:Projects
+	});
 });
 
 app.post('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
@@ -408,7 +435,9 @@ app.get('/viewProject_id=:id&:variable', redirectLogin, (req,res) => {
 	var directoryPath;// = FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')) + CurrentPath;
 	var CurrPath;//=project.title.substring(0,project.title.indexOf('.'));
 	var Structure2;
+	var projectIsMine;
 	if(project !== -1){
+		projectIsMine = DbUsers.isMyProject(req.session.userId, project.id);
 		ProjectTitle = project.title;
 		Likes = project.likes;
 		Dislikes = project.dislikes;
@@ -498,9 +527,9 @@ app.get('/viewProject_id=:id&:variable', redirectLogin, (req,res) => {
 	// 	return arrayOfFiles
 	//   } 
 	//   const result = getAllFiles(FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')));
-	 
+	
 	res.render('viewProject', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg',
-		ProjectId:req.session.userId,
+		ProjectId:id,
 		ProjectTitle:ProjectTitle,
     	Likes:Likes,
 		Dislikes:Dislikes,
@@ -508,6 +537,7 @@ app.get('/viewProject_id=:id&:variable', redirectLogin, (req,res) => {
 		Structure:Structure,
 		StructureLinks:StructureLinks,
 		CurrPath:variable,
+		projectIsMine:projectIsMine
 	});
 	
 	// res.send('HelloWorld');
@@ -518,6 +548,24 @@ app.get('/viewProject_id=:id&:variable', redirectLogin, (req,res) => {
 app.get('/upload', (req,res) => {
 	res.render('upload', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 	// res.send('HelloWorld');
+});
+
+app.post('/uploadvideo_projectid=:id', uploadVideo.single(UploadPinName), (req, res, next) => {
+	const file = req.file
+	var id = req.params.id;
+	if (!file) {
+	  const error = new Error('Please upload a file')
+	  error.httpStatusCode = 400
+	  return next(error)
+	}
+
+	//Update projects in database
+	database.ref('projects/' + DbProjects.GetProjectById(id).database_path).update({
+		video_path : "videos/" + file.originalname
+	});
+
+	console.log("file " + req.file + " uploaded successfully to "+FolderToSaveVideos);
+	res.redirect('/');
 });
 
 app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
@@ -620,7 +668,9 @@ app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
 		id:newProjectId,
 		project_path:FolderToSaveBares,
 		title:projNameWithoutDotZip+".git",
-		video_path:FolderToSaveVideos
+		video_path:FolderToSaveVideos,
+		readme:" ",
+		description:" "
 	});
 	// console.log(ref);
 
@@ -666,7 +716,7 @@ app.get('/profile', redirectLogin, (req,res) => {
 });
 
 
-app.get('/projects_id=:id', (req,res) => {
+app.get('/projects_id=:id', redirectLogin, (req,res) => {
 	var userId = req.params.id;
 	console.log("userId="+userId);
 	var user = DbUsers.GetUserById(userId);
@@ -682,8 +732,8 @@ app.get('/projects_id=:id', (req,res) => {
 			if( project != -1){//Valid project
 				var UserProject = {};
 				UserProject["ProjectTitle"] = project.title;
-				UserProject["ProjectDescription"] = "TODO-ProjectDescription";
-				UserProject["ProjectReadme"] = "TODO-ProjectReadme";
+				UserProject["ProjectDescription"] = project.description;
+				UserProject["ProjectReadme"] = project.readme;
 				UserProject["ProjectGif"] = project.video_path;
 				UserProject["ProjectId"] = project.id;
 				UserProjects.push(UserProject);
@@ -806,11 +856,14 @@ function BasicAuth(req,res){
 						console.log(req.protocol+'://' + req.hostname + req.originalUrl);
 						//console.log("git -C "+FolderToSaveNonBares+repoName +"/ pull " + FolderToSaveBares+repo +";\n");
 						// exec("git -C "+FolderToSaveNonBares+repoName +"/ pull " + FolderToSaveBares+repo +";\n");
-						
-						//TODO
-						// check if project id belongs to user
-						console.log(exec("rm -rf "+FolderToSaveNonBares+repoName+";\n").toString());
-						console.log(exec("git -C "+FolderToSaveNonBares+" clone " + FolderToSaveBares+repo +";\n").toString());
+						var project = DbProjects.GetProjectByTitle(repo);
+						if( project != -1){
+							if(DbUsers.isMyProject(user.id, project.id)){
+								// check if project id belongs to user
+								console.log(exec("rm -rf "+FolderToSaveNonBares+repoName+";\n").toString());
+								console.log(exec("git -C "+FolderToSaveNonBares+" clone " + FolderToSaveBares+repo +";\n").toString());
+							}
+						}
 					}
 					if(service.action == "pull"){
 						console.log("[pull-(clone)] command detected!");

@@ -12,6 +12,8 @@ head
   link(type='text/css', rel="stylesheet" , href='main.css')
   // <script src="main.js"></script>
   script(src='http://code.jquery.com/jquery-2.1.4.min.js')
+  script.
+    var Projects;
   style.
     video {
     width: 100%;
@@ -74,54 +76,61 @@ head
     <p class="wrapText"><span>Using our vault, it helps us retreive all the useful info that our bleeding edge technology will use to solve many problems in the IT industry</span></p>
     </div>
 .grid-container
-  //
-    <div class="grid-item">
-    <video autoplay loop muted>
-    <source src="https://www.youtube.com/watch?v=HdghNESbPOk" type="video/mp4">
-    </video>
-    </div>
-  a(href='viewProject.html')
-    .grid-item
-      img(src='newgif.gif', alt='this slowpoke moves', width='250/')
-      .grid-info
-        img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
-        p.project_title.alignHorizontally Cpp Raytracer
-        p.project_description Ray tracer implemented in cpp
-  .grid-item
-    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
-    .grid-info
-      img.avatar.alignHorizontally(src='Profile2.png', style='width:30px;height:30px;', alt='Avatar')
-      p.project_title.alignHorizontally My Website code
-      p.project_description Repo of my code website
-  .grid-item
-    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
-    .grid-info
-      img.avatar.alignHorizontally(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
-      p.project_title.alignHorizontally Html components
-      p.project_description Html components for the web
-  .grid-item
-    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
-    .grid-info
-      img.avatar.alignHorizontally(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
-      p.project_title.alignHorizontally My Personal Git
-      p.project_description Online Space for my university projects
-  .grid-item
-    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
-  .grid-item
-    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
-  .grid-item
-    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
-  .grid-item
-    img(src='newgif.gif', alt='this slowpoke moves', width='250/')
-  .grid-item
-    video(autoplay='', loop='', muted='')
-      source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
-  .grid-item
-    video(autoplay='', loop='', muted='')
-      source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
-  .grid-item
-    video(autoplay='', loop='', muted='')
-      source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
+  each key,value in Projects
+    - var gif = key.video_path;//["video_path"]
+    - var ProjectId = key.id;//["id"]
+    - var ProjectTitle = key.title;//["title"]
+    - var desc = key.description;
+    a(href='/viewProject_id='+ProjectId+'&'+ProjectTitle)
+      .grid-item
+        img(src=gif, alt='this slowpoke moves', width='250/')
+        .grid-info
+          img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
+          p.project_title.alignHorizontally=ProjectTitle
+          p.project_description=desc
+
+  //- a(href='viewProject.html')
+  //-   .grid-item
+  //-     img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  //-     .grid-info
+  //-       img.avatar(src='1.png', style='width:30px;height:30px;', alt='Avatar')
+  //-       p.project_title.alignHorizontally Cpp Raytracer
+  //-       p.project_description Ray tracer implemented in cpp
+  //- .grid-item
+  //-   img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  //-   .grid-info
+  //-     img.avatar.alignHorizontally(src='Profile2.png', style='width:30px;height:30px;', alt='Avatar')
+  //-     p.project_title.alignHorizontally My Website code
+  //-     p.project_description Repo of my code website
+  //- .grid-item
+  //-   img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  //-   .grid-info
+  //-     img.avatar.alignHorizontally(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+  //-     p.project_title.alignHorizontally Html components
+  //-     p.project_description Html components for the web
+  //- .grid-item
+  //-   img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  //-   .grid-info
+  //-     img.avatar.alignHorizontally(src='Profile1.jpeg', style='width:30px;height:30px;', alt='Avatar')
+  //-     p.project_title.alignHorizontally My Personal Git
+  //-     p.project_description Online Space for my university projects
+  //- .grid-item
+  //-   img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  //- .grid-item
+  //-   img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  //- .grid-item
+  //-   img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  //- .grid-item
+  //-   img(src='newgif.gif', alt='this slowpoke moves', width='250/')
+  //- .grid-item
+  //-   video(autoplay='', loop='', muted='')
+  //-     source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
+  //- .grid-item
+  //-   video(autoplay='', loop='', muted='')
+  //-     source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
+  //- .grid-item
+  //-   video(autoplay='', loop='', muted='')
+  //-     source(src='http://www.w3schools.com/html/mov_bbb.mp4', type='video/mp4')
 // The core Firebase JS SDK is always required and must be listed first
 script(src='/__/firebase/7.5.0/firebase-app.js')
 //

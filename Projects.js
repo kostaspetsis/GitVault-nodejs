@@ -39,5 +39,16 @@ class Projects{
 		}
 		return -1;
 	}
+
+	GetProjectByTitle(title){
+		for(var i = 0; i < this.data.length; i++){
+			if (this.data[i].title == title){
+				return this.data[i];
+			}else{
+				console.log("id is '"+this.data[i].title+"' and parametertitle = '" + title+"'");
+			}
+		}
+		return -1;
+	}
 };
 module.exports = Projects;

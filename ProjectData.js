@@ -7,7 +7,9 @@ class ProjectData{
 				likes,
 				dislikes,
 				comments,
-				database_path){
+				database_path,
+				readme,
+				description){
 		this.title = title;
 		this.project_path = project_path; 
 		this.video_path = video_path; 
@@ -17,6 +19,8 @@ class ProjectData{
 		this.dislikes = dislikes; 
 		this.comments = comments; 
 		this.database_path = database_path;
+		this.readme = readme;
+		this.description=description;
 	}
 };
 module.exports = ProjectData;

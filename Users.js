@@ -54,6 +54,28 @@ class Users{
 		}
 	}
 
+	isMyProject(userid, idproject){
+		var user = this.GetUserById(userid);
+		console.log("isMyProject:userid="+user.id+", projectid="+idproject);
+		if( user != -1){
+			console.log(user.database_path,
+						user.username,
+						user.password,
+						user.email,
+						user.id,
+						user.project_ids);
+			for (let i = 0; i < user.project_ids.length; i++) {
+				const element = user.project_ids[i];
+				console.log("currentid= "+element+", idproject="+idproject);
+				if( element == idproject){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
 	GetUserById(id){
 		for (let i = 0; i < this.data.length; i++) {
 			const element = this.data[i];
