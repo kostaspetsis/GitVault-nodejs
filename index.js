@@ -56,9 +56,9 @@ var admzip = require('adm-zip');
 // var unzip = require('unzip');
 
 var UploadPinName = 'file';
-var FolderToSaveBares = '/home/kostas/Documents/repos/bares/';
-var FolderToSaveNonBares = '/home/kostas/Documents/repos/non-bares/';
-var FolderToSaveZips = '/home/kostas/Documents/repos/zips/';
+var FolderToSaveBares = '/home/user/Documents/repos/bares/';
+var FolderToSaveNonBares = '/home/user/Documents/repos/non-bares/';
+var FolderToSaveZips = '/home/user/Documents/repos/zips/';
 var FolderToSaveVideos='./public/videos/';
 // SET STORAGE
 var storage = multer.diskStorage({
@@ -413,7 +413,7 @@ app.post('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
 		});
 	}
 
-	res.redirect('/viewProject_id='+ProjectId);
+	res.redirect('/viewProject_id='+ProjectId+'&'+project.title);
 });
 // How can i clone this project to my personal computer?What is the terminal command?
 app.get('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
