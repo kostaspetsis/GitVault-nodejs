@@ -427,9 +427,10 @@ app.post('/like_projectid=:id', redirectLogin, (req,res) => {
 		database.ref('projects/' + project.database_path).update({
 			likes:project.likes+1
 		});
-		res.redirect('/viewProject_id='+id);
+		res.redirect('/viewProject_id='+id+'&'+project.title);
+	}else{
+		res.redirect('explore');
 	}
-	res.redirect('explore');
 });
 
 app.post('/dislike_projectid=:id', redirectLogin, (req,res) => {
@@ -439,9 +440,10 @@ app.post('/dislike_projectid=:id', redirectLogin, (req,res) => {
 		database.ref('projects/' + project.database_path).update({
 			dislikes:project.dislikes+1
 		});
-		res.redirect('/viewProject_id='+id);
+		res.redirect('/viewProject_id='+id +'&'+project.title);
+	}else{
+		res.redirect('explore');
 	}
-	res.redirect('explore');
 });
 
 app.get('/viewProject_id=:id&:variable', redirectLogin, (req,res) => {
