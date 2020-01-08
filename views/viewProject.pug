@@ -18,6 +18,8 @@ head
     var	Likes;
     var	Dislikes;
     var Comments;
+    var Structure;
+    var CurrPath;
   style.
     #projectStructure{
     list-style: none;
@@ -72,22 +74,45 @@ head
   
   include nav.pug
   
+h1(name="CurrentPath" value=CurrPath)
 .projectInfo
   img.avatar.alignHorizontally(src='Profile1.jpeg', style='width:50px;height:50px;', alt='Avatar')
   h1.alignHorizontally.projectName=ProjectTitle
+//- ul#projectStructure
+//-   li.structureBlock
+//-     .alignHorizontally
+//-       img(src='folder.png', alt='', width='32')
+//-       a(href='#src') src
+//-   li.structureBlock
+//-     .alignHorizontally
+//-       img(src='folder.png', alt='', width='32')
+//-       a(href='#include') include
+//-   li.structureBlock
+//-     .alignHorizontally
+//-       img(src='folder.png', alt='', width='32')
+//-       a(href='#lib') lib
+
+//- ul#projectStructure
+//- each key,value in Structure
+//-   - var itemLinkToPath = key['itemLinkToPath']
+//-   - var itemTitle = key['itemTitle']
+//-   - var itemType = key['itemType']
+//-   li.structureBlock
+//-     .alignHorizontally
+//-       if itemType == "folder"
+//-         img(src='folder.png', alt='', width='32')
+//-       else
+//-         img(src='file.png', alt='', width='32')
+//-       a=itemTitle
+//-   h1=21
 ul#projectStructure
-  li.structureBlock
-    .alignHorizontally
-      img(src='folder.png', alt='', width='32')
-      a(href='#src') src
-  li.structureBlock
-    .alignHorizontally
-      img(src='folder.png', alt='', width='32')
-      a(href='#include') include
-  li.structureBlock
-    .alignHorizontally
-      img(src='folder.png', alt='', width='32')
-      a(href='#lib') lib
+  each key in Structure
+    - var itemTitle = key;
+    li.structureBlock
+      .alignHorizontally
+        img(src='folder.png', alt='', width='32')
+        a(href="#"+itemTitle)=itemTitle
+
 .alignH
   .alignV
     button.btn.btn-success(style='border:5px solid green;') Like

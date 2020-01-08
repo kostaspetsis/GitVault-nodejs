@@ -402,6 +402,11 @@ app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 	var id = req.params.id;
 	var project = DbProjects.GetProjectById(id);
 	console.log("project id = "+id);
+	var CurrentPath = req.params.CurrentPath;
+	
+	var Structure = [];
+	var directoryPath;// = FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')) + CurrentPath;
+	var CurrPath;//=project.title.substring(0,project.title.indexOf('.'));
 	if(project !== -1){
 		ProjectTitle = project.title;
 		Likes = project.likes;
@@ -414,17 +419,84 @@ app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 			Comment["from_user"] = element.from_user;
 			Comment["time"] = element.time;
 			Comments.push(Comment);
+			
+			var CurrPath=project.title.substring(0,project.title.indexOf('.'));
+			if (CurrentPath == "" || CurrentPath == undefined){
+				CurrentPath = CurrPath;
+			}
+			// console.log(ProjectTitle,Likes,Dislikes);
+			var directoryPath = FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.'));
+
+			
+			fs.readdirSync(directoryPath, function (err, files) {
+				var fileNames = "Filenames are =";
+		
+				//handling error
+				if (err) {
+					return console.log('Unable to scan directory: ' + err);
+				}
+				var i = 0; 
+				//listing all files using forEach
+				files.forEach(function (file) {
+					// Do whatever you want to do with the file
+					console.log(file); 
+					var itemLinkToPath = "undefind";
+					var itemTitle = file;
+					var itemType = "undefind";
+					fileNames += file + "\n";
+					var stat = fs.statSync(directoryPath+"/"+file);
+					if (stat && stat.isDirectory()) { 
+						itemType = "folder";
+						console.log('folder');
+					}else{
+						itemType = "file";
+						console.log('file');
+					}
+					// if(i != 0){
+					// 	Structure[i-1]["itemLinkToPath"] = itemTitle;
+					// }
+					var block = {};
+					block["itemLinkToPath"] = itemLinkToPath;
+					block["itemTitle"]=itemTitle;
+					block["itemType"]=itemType;
+					Structure.push(block);
+					i++;
+				});
+			});
+
+			Structure = fs.readdirSync(FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')));
 		}
 	}else{
 		console.log("No such project with id["+id+"]");
 	}
-	// console.log(ProjectTitle,Likes,Dislikes);
+	
+	// const getAllFiles = function(dirPath, arrayOfFiles) {
+	// 	files = fs.readdirSync(dirPath)
+	   
+	// 	arrayOfFiles = arrayOfFiles || []
+	   
+	// 	files.forEach(function(file) {
+	// 	  if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+	// 		arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
+	// 	  } else {
+	// 		arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
+	// 		// arrayOfFile["itemLink"] = 
+	// 		// arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
+	// 	  }
+	// 	})
+	   
+	// 	return arrayOfFiles
+	//   } 
+	//   const result = getAllFiles(FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')));
+
 	res.render('viewProject', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg',
 		ProjectId:req.session.userId,
 		ProjectTitle:ProjectTitle,
     	Likes:Likes,
 		Dislikes:Dislikes,
-		Comments:Comments
+		Comments:Comments,
+		Structure:Structure,
+		CurrPath:CurrentPath
 	});
 	
 	// res.send('HelloWorld');
