@@ -393,7 +393,7 @@ app.get('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
 	res.redirect('/viewProject_id='+ProjectId);
 });
 
-app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
+app.get('/viewProject_id=:id&:variable', redirectLogin, (req,res) => {
 	var ProjectTitle = "undefined";
 	console.log("id of viewProject["+req.params.id+"]");
 	var Likes = "undefined";
@@ -403,10 +403,11 @@ app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 	var project = DbProjects.GetProjectById(id);
 	console.log("project id = "+id);
 	var CurrentPath = req.params.CurrentPath;
-	
+	console.log("Variable::::::::::::" + req.params.variable);
 	var Structure = [];
 	var directoryPath;// = FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')) + CurrentPath;
 	var CurrPath;//=project.title.substring(0,project.title.indexOf('.'));
+	var Structure2;
 	if(project !== -1){
 		ProjectTitle = project.title;
 		Likes = project.likes;
@@ -463,8 +464,17 @@ app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 					i++;
 				});
 			});
-
-			Structure = fs.readdirSync(FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')));
+			var variable = req.params.variable;
+			variable = variable.replace('.git','');
+			variable = variable.replace('SLASH','/');
+			Structure = fs.readdirSync(FolderToSaveNonBares +variable);
+			var StructureLinks = [];
+			for(var x=0; x< Structure.length; x++){
+				// StructureLinks[x] = FolderToSaveNonBares +variable +"/"+ Structure[x];
+				StructureLinks[x] = Structure[x];
+			}
+			// Structure = fs.readdirSync(FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')));
+			// Structure2 = fs.readdirSync(FolderToSaveNonBares + req.params.variable);
 		}
 	}else{
 		console.log("No such project with id["+id+"]");
@@ -488,7 +498,7 @@ app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 	// 	return arrayOfFiles
 	//   } 
 	//   const result = getAllFiles(FolderToSaveNonBares + project.title.substring(0,project.title.indexOf('.')));
-
+	 
 	res.render('viewProject', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg',
 		ProjectId:req.session.userId,
 		ProjectTitle:ProjectTitle,
@@ -496,7 +506,8 @@ app.get('/viewProject_id=:id', redirectLogin, (req,res) => {
 		Dislikes:Dislikes,
 		Comments:Comments,
 		Structure:Structure,
-		CurrPath:CurrentPath
+		StructureLinks:StructureLinks,
+		CurrPath:variable,
 	});
 	
 	// res.send('HelloWorld');

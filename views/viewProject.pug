@@ -19,6 +19,8 @@ head
     var	Dislikes;
     var Comments;
     var Structure;
+    var Structure2;
+    var StructureLinks;
     var CurrPath;
   style.
     #projectStructure{
@@ -106,12 +108,13 @@ h1(name="CurrentPath" value=CurrPath)
 //-       a=itemTitle
 //-   h1=21
 ul#projectStructure
-  each key in Structure
+  each key,i in Structure
     - var itemTitle = key;
     li.structureBlock
       .alignHorizontally
         img(src='folder.png', alt='', width='32')
-        a(href="#"+itemTitle)=itemTitle
+        //- a(href='viewProjStructureLinks[i])=itemTitle
+        a(href='/viewProject_id=' + ProjectId + "&" +CurrPath + "SLASH"+StructureLinks[i])=itemTitle
 
 .alignH
   .alignV
