@@ -420,6 +420,30 @@ app.get('/post_comment_id=:ProjectId', redirectLogin, (req,res) => {
 	res.redirect('/viewProject_id='+ProjectId);
 });
 
+app.post('/like_projectid=:id', redirectLogin, (req,res) => {
+	var id = req.params.id;
+	var project = DbProjects.GetProjectById(id);
+	if(project != -1){
+		database.ref('projects/' + project.database_path).update({
+			likes:project.likes+1
+		});
+		res.redirect('/viewProject_id='+id);
+	}
+	res.redirect('explore');
+});
+
+app.post('/dislike_projectid=:id', redirectLogin, (req,res) => {
+	var id = req.params.id;
+	var project = DbProjects.GetProjectById(id);
+	if(project != -1){
+		database.ref('projects/' + project.database_path).update({
+			dislikes:project.dislikes+1
+		});
+		res.redirect('/viewProject_id='+id);
+	}
+	res.redirect('explore');
+});
+
 app.get('/viewProject_id=:id&:variable', redirectLogin, (req,res) => {
 	var ProjectTitle = "undefined";
 	console.log("id of viewProject["+req.params.id+"]");
