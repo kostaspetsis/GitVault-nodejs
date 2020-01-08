@@ -59,7 +59,7 @@ var UploadPinName = 'file';
 var FolderToSaveBares = '/home/kostas/Documents/repos/bares/';
 var FolderToSaveNonBares = '/home/kostas/Documents/repos/non-bares/';
 var FolderToSaveZips = '/home/kostas/Documents/repos/zips/';
-
+var FolderToSaveVideos='/home/kostas/Documents/repos/videos/';
 // SET STORAGE
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -171,6 +171,7 @@ function ConnectToDatabase(){
 					proj_idsArray.push(users[keys[i]].project_ids[proj_idsKeys[j]]);
 				}
 				var user = new UserData(
+					users[keys[i]].database_path,
 					users[keys[i]].username,
 					users[keys[i]].password,
 					users[keys[i]].email,
@@ -316,13 +317,21 @@ app.post('/register1', (req,res) => {
 		id,
 		[-1]
 	);
-	database.ref('user').push({
+	var newref = database.ref('user').push({
+		database_path:"-1",
 		username:user.username,
 		email:user.email,
 		password:user.password,
 		id:user.id,
 		project_ids:user.project_ids
 	});
+
+	//Update database_path
+	var database_path = newref['path']['pieces_'][1];
+	newref.update({
+		database_path:database_path,
+	});
+
 	res.redirect('/explore');
 });
 // app.get('/login1',(req,res)=>{
@@ -508,7 +517,52 @@ app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
 	// 	  });
 	// 	//   res.send("<h1>"+fileNames+"</h1");
 	//   });
-	  res.render('upload', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
+
+	// Push new project to database
+	var user = DbUsers.GetUserById(req.session.userId);
+	var uname = DbUsers.GetUserById(req.session.userId).username;
+	console.log(uname);
+	console.log(DbProjects.data.length);
+	var dateInfo = new Date();
+	var commentDate = dateInfo.toISOString().slice(0,10);
+	var commentTime = dateInfo.toISOString().slice(11,16);
+
+	var newProjectId = DbProjects.data.length+1;
+	var ref = database.ref('projects').push({
+		comments:-1,
+		database_path:"ok",
+		dislikes:0,
+		likes:0,
+		from_user:uname,
+		id:newProjectId,
+		project_path:FolderToSaveBares,
+		title:projNameWithoutDotZip+".git",
+		video_path:FolderToSaveVideos
+	});
+	// console.log(ref);
+
+	//Update database_path to project = the newly created
+	var database_path = ref['path']['pieces_'][1];
+	ref.update({
+		database_path:database_path,
+	});
+
+	//Make a first comment by us(to have something in comments)
+	database.ref("projects/" + database_path +"/comments").push({
+		Text:"Initiali Commit",
+		date:commentDate,
+		from_user:uname,
+		time:commentTime
+	});
+
+	//Update our user in firebase so that he has the newly created project id in his project_ids
+	var newProject_ids = user.project_ids;
+	newProject_ids.push(newProjectId);
+	database.ref('user/'+user.database_path).update({
+		project_ids:newProject_ids
+	});
+
+	res.render('upload', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 });
   
 
