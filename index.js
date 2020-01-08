@@ -58,12 +58,12 @@ var admzip = require('adm-zip');
 var UploadPinName = 'file';
 var FolderToSaveBares = '/home/kostas/Documents/repos/bares/';
 var FolderToSaveNonBares = '/home/kostas/Documents/repos/non-bares/';
-var FolderToSaveZips = 'repos/zips/';
+var FolderToSaveZips = '/home/kostas/Documents/repos/zips/';
 
 // SET STORAGE
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "/home/kostas/Documents/repos/zips/")
+    cb(null, FolderToSaveZips)
   },
   filename: function (req, file, cb) {
 //    cb(null, file.fieldname + '-' + Date.now())
@@ -438,7 +438,7 @@ app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
 
 
 	var fileNames = "Filenames are=";
-	var zip = new admzip("/home/kostas/Documents/repos/zips/" + file.originalname);
+	var zip = new admzip(FolderToSaveZips + file.originalname);
 	zip.extractAllTo(FolderToSaveNonBares, true);
 	 
 	var projNameWithoutDotZip = file.originalname.substring(0,file.originalname.indexOf('.'));
@@ -646,48 +646,66 @@ function BasicAuth(req,res){
 		var username = creds[0];
 		var password = creds[1];
 		
-		//TODO remove if(1)
-		if(1){
-		//if((username == 'hack') && (password == 'thegibson')) {   // Is the username/password correct?
-
-			res.statusCode = 200;  // OK
-			var b = backend(req.url, function (err, service) {
-				if (err) return res.end(err + '\n');
-				// res.setHeader("WWW-Authenticate", 'Basic realm="authorization needed"');
+		var user = DbUsers.GetUserByUsername(username);
+		if (user != -1){
+			console.log("User with username:"+username+" exists.Checking for password...");
+			if(user.password == password){
+				console.log("User Authenticated.Proceeding to git commands[push,pull]");
+	
+				res.statusCode = 200;  // OK
+				var b = backend(req.url, function (err, service) {
+					if (err) return res.end(err + '\n');
+					// res.setHeader("WWW-Authenticate", 'Basic realm="authorization needed"');
+							
+					res.setHeader('content-type', service.type);
 						
-				res.setHeader('content-type', service.type);
+					console.log("action:"+service.action, "repo:"+repo, "fields:"+service.fields);
+					console.log("cmd:"+service.cmd,"args:"+service.args,"action:"+service.action,"fields:"+service.fields,"type:"+service.type);
 					
-				console.log("action:"+service.action, "repo:"+repo, "fields:"+service.fields);
-				console.log("cmd:"+service.cmd,"args:"+service.args,"action:"+service.action,"fields:"+service.fields,"type:"+service.type);
-				
-				var repoName = repo.substring(0,repo.indexOf('.'));
-		
-				if(service.action == "push"){
-					console.log("[push] command detected!");
-					console.log(req.protocol+'://' + req.hostname + req.originalUrl);
-					console.log(exec("git -C "+FolderToSaveNonBares+repoName +"/ pull " + FolderToSaveBares+repo +";").toString());
-				}
-				if(service.action == "pull"){
-					console.log("[pull-(clone)] command detected!");
-				}
-				if(service.action == "remote"){
-					console.log("[push] command detected!");
-				}
-				var ps = spawn(service.cmd, service.args.concat(dir));
-				ps.stdout.pipe(service.createStream()).pipe(ps.stdin);
-			    });
-		
-			// req.pipe(b).pipe(res);
-			// var sb = b.createBand();
-			var repo = req.url.split('/')[1];
-			var dir = path.join('', FolderToSaveBares, repo);
-			var reqStream = req.headers['content-encoding'] == 'gzip' ? req.pipe(zlib.createGunzip()) : req;
-			// sb.write("dsds");
-			console.log("Enwmenoi");
-			console.log(req.protocol+'://' + req.hostname + req.originalUrl);
-		
-			reqStream.pipe(b).pipe(res);
-			authenticated=true;
+					var repoName = repo.substring(0,repo.indexOf('.'));
+					console.log("repoName:"+repoName);
+					if(service.action == "push"){
+						console.log("[push] command detected!");
+						console.log(req.protocol+'://' + req.hostname + req.originalUrl);
+						//console.log("git -C "+FolderToSaveNonBares+repoName +"/ pull " + FolderToSaveBares+repo +";\n");
+						// exec("git -C "+FolderToSaveNonBares+repoName +"/ pull " + FolderToSaveBares+repo +";\n");
+						
+						//TODO
+						// check if project id belongs to user
+						console.log(exec("rm -rf "+FolderToSaveNonBares+repoName+";\n").toString());
+						console.log(exec("git -C "+FolderToSaveNonBares+" clone " + FolderToSaveBares+repo +";\n").toString());
+					}
+					if(service.action == "pull"){
+						console.log("[pull-(clone)] command detected!");
+					}
+					if(service.action == "remote"){
+						console.log("[push] command detected!");
+					}
+					var ps = spawn(service.cmd, service.args.concat(dir));
+					ps.stdout.pipe(service.createStream()).pipe(ps.stdin);
+					});
+			
+				// req.pipe(b).pipe(res);
+				// var sb = b.createBand();
+				var repo = req.url.split('/')[1];
+				var dir = path.join('', FolderToSaveBares, repo);
+				var reqStream = req.headers['content-encoding'] == 'gzip' ? req.pipe(zlib.createGunzip()) : req;
+				// sb.write("dsds");
+				console.log("Enwmenoi");
+				console.log(req.protocol+'://' + req.hostname + req.originalUrl);
+			
+				reqStream.pipe(b).pipe(res);
+				authenticated=true;
+			}else{
+				console.log("Wrong password");
+				res.statusCode = 401; // Force them to retry authentication
+				res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+
+				// res.statusCode = 403;   // or alternatively just reject them altogether with a 403 Forbidden
+
+				res.end('<html><body>Wrong password</body></html>');
+				authenticated = false;
+			}
 		}
 		else {
 					console.log("Wrong credentials bro");
