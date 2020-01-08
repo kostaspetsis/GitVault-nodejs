@@ -62,7 +62,7 @@ var FolderToSaveZips = 'repos/zips/';
 // SET STORAGE
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, FolderToSaveZips)
+    cb(null, "/home/kostas/Documents/repos/zips/")
   },
   filename: function (req, file, cb) {
 //    cb(null, file.fieldname + '-' + Date.now())
@@ -437,13 +437,13 @@ app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
 
 
 	var fileNames = "Filenames are=";
-	var zip = new admzip(FolderToSaveZips + file.originalname);
-	zip.extractAllTo(FolderToSaveNonBares, true);
+	var zip = new admzip("/home/kostas/Documents/repos/zips/" + file.originalname);
+	zip.extractAllTo("/home/kostas/Documents/repos/non-bares/", true);
 	 
 	var projNameWithoutDotZip = file.originalname.substring(0,file.originalname.indexOf('.'));
 	//joining path of directory
-	var directoryPath = path.join(__dirname, FolderToSaveNonBares+projNameWithoutDotZip);
-	console.log(directoryPath);
+	// var directoryPath = path.join(__dirname, FolderToSaveNonBares+projNameWithoutDotZip);
+	// console.log(directoryPath);
 
 	let exec = require('child_process').execSync;
 	// exec('mkdir '+FolderToSaveBares+projNameWithoutDotZip+'.git', (error, stdout, stderr) => {
@@ -464,30 +464,49 @@ app.post('/uploadfile', upload.single(UploadPinName), (req, res, next) => {
 	// exec('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push ' + FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master', (error, stdout, stderr) => {
 	// 	console.log('git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push ' + FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master');
 	// });
-	exec('mkdir '+FolderToSaveBares+projNameWithoutDotZip+'.git;'+
-	'git init --bare '+FolderToSaveBares+projNameWithoutDotZip+'.git;'+
-	'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' add -A;'+
-	'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' commit -m '+'"initial commit";'+
-	'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +' push ' + FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master' , (error,stdout,stderr) => {});
+
+
+	// exec('mkdir '+FolderToSaveBares+projNameWithoutDotZip+'.git;'+
+	// 'git -C '+ FolderToSaveBares+projNameWithoutDotZip+'.git/'+' init --bare;'+
+	// 'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +'/'+' add *;'+
+	// 'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +'/'+' commit -m '+'"initial commit";'+
+	// 'git -C '+ FolderToSaveNonBares+projNameWithoutDotZip +'/'+' push ' + FolderToSaveBares+projNameWithoutDotZip+'.git' + ' master' , (error,stdout,stderr) => {});
 	
+	// exec('mkdir '+FolderToSaveBares+projNameWithoutDotZip+'.git;'+
+	// 'cd '+FolderToSaveBares+projNameWithoutDotZip+'.git;'+'git init --bare;cd ../../;'+
+	// 'cd non-bares/'+ projNameWithoutDotZip+';'+'git init;git add *;'+
+	// 'git commit -m '+'"initial commit";'+
+	// 'git push ../../bares/' + projNameWithoutDotZip+'.git' + ' master' , (error,stdout,stderr) => {});
+	console.log("git -C /home/kostas/Documents/repos/non-bares/" + projNameWithoutDotZip+"/" + " init;");
+	var Commands = "mkdir /home/kostas/Documents/repos/bares/" + projNameWithoutDotZip +".git;"+
+				   "git -C /home/kostas/Documents/repos/bares/"+ projNameWithoutDotZip +".git init --bare;"+
+				   "git -C /home/kostas/Documents/repos/non-bares/" + projNameWithoutDotZip+"/" + " init;";
+				//    "git -C /home/kostas/Documents/repos/non-bares/" + projNameWithoutDotZip+"/" + " add *;"+ 
+				//    "git -C /home/kostas/Documents/repos/non-bares/" + projNameWithoutDotZip+"/" + " commit -m 'initial commit';"+
+				//    "git -C /home/kostas/Documents/repos/non-bares/" + projNameWithoutDotZip+"/" + " push " + "/home/kostas/Documents/repos/bares/" + projNameWithoutDotZip + ".git master;";
+	
+	exec(Commands, (error,stdout,stderr)=>{});
 
 
-	  //passsing directoryPath and callback function
-	  fs.readdir(directoryPath, function (err, files) {
-		  var fileNames = "Filenames are =";
+	console.log(exec("git -C /home/kostas/Documents/repos/non-bares/"+projNameWithoutDotZip +"/ add .;").toString());
+	console.log(exec("git -C /home/kostas/Documents/repos/non-bares/"+projNameWithoutDotZip +"/ commit -m 'initiali commit';").toString());
+	console.log(exec("git -C /home/kostas/Documents/repos/non-bares/"+projNameWithoutDotZip +"/ push "+ "/home/kostas/Documents/repos/bares/" + projNameWithoutDotZip + ".git master;").toString());
+	//   //passsing directoryPath and callback function
+	//   fs.readdir(directoryPath, function (err, files) {
+	// 	  var fileNames = "Filenames are =";
 	  
-		  //handling error
-		  if (err) {
-			  return console.log('Unable to scan directory: ' + err);
-		  } 
-		  //listing all files using forEach
-		  files.forEach(function (file) {
-			  // Do whatever you want to do with the file
-			  console.log(file); 
-			  fileNames += file + "\n";
-		  });
-		//   res.send("<h1>"+fileNames+"</h1");
-	  });
+	// 	  //handling error
+	// 	  if (err) {
+	// 		  return console.log('Unable to scan directory: ' + err);
+	// 	  } 
+	// 	  //listing all files using forEach
+	// 	  files.forEach(function (file) {
+	// 		  // Do whatever you want to do with the file
+	// 		  console.log(file); 
+	// 		  fileNames += file + "\n";
+	// 	  });
+	// 	//   res.send("<h1>"+fileNames+"</h1");
+	//   });
 	  res.render('upload', {UserId:req.session.userId,authorized:isUserAuthorized(req), ProfilePicture:'Profile1.jpeg'});
 });
   
@@ -650,8 +669,10 @@ function BasicAuth(req,res){
 		var creds = plain_auth.split(':');      // split on a ':'
 		var username = creds[0];
 		var password = creds[1];
-
-		if((username == 'hack') && (password == 'thegibson')) {   // Is the username/password correct?
+		
+		//TODO remove if(1)
+		if(1){
+		//if((username == 'hack') && (password == 'thegibson')) {   // Is the username/password correct?
 
 			res.statusCode = 200;  // OK
 			var b = backend(req.url, function (err, service) {
@@ -680,7 +701,7 @@ function BasicAuth(req,res){
 			// req.pipe(b).pipe(res);
 			// var sb = b.createBand();
 			var repo = req.url.split('/')[1];
-			var dir = path.join(__dirname, 'repos/bares/', repo);
+			var dir = path.join('', '/home/kostas/Documents/repos/bares/', repo);
 			var reqStream = req.headers['content-encoding'] == 'gzip' ? req.pipe(zlib.createGunzip()) : req;
 			// sb.write("dsds");
 			console.log("Enwmenoi");
