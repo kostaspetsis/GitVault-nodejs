@@ -17,42 +17,42 @@ This project demonstrates how to integrate Git’s `git-http-backend` into a mod
 ## 📸 Demo Preview
 Below are live previews (GIFs) of GitVault-NodeJS in action. All assets are located in `public/gifs/`.
 
-
-<p align="center">
-  <img src="public/gifs/loginRegister.gif" width="600" alt="LoginRegister">
-</p>
-
-<p align="center">
-  <img src="public/gifs/Login.gif" width="600" alt="Login">
-</p>
+# Register
 <p align="center">
   <img src="public/gifs/Register.gif" width="600" alt="Register">
 </p>
 
+# Login
+<p align="center">
+  <img src="public/gifs/Login.gif" width="600" alt="Login">
+</p>
+
+# Explore other projects
 <p align="center">
   <img src="public/gifs/explore.gif" width="600" alt="Explore other projects">
 </p>
 
+# View your projects
 <p align="center">
   <img src="public/gifs/Projects.gif" width="600" alt="View your projects">
 </p>
 
-<p align="center">
-  <img src="public/gifs/newgif.gif" width="600" alt="New Project">
-</p>
-
-
+# Upload a zip project by click
 <p align="center">
   <img src="public/gifs/UploadByClick.gif" width="600" alt="Upload By click">
 </p>
 
+# Upload a zip project by drag n drop
 <p align="center">
   <img src="public/gifs/UploadByDragNDrop.gif" width="600" alt="Upload By Drag n drop">
 </p>
+
+# View project files
 <p align="center">
   <img src="public/gifs/viewProject.gif" width="600" alt="View project files">
 </p>
 
+# Edit your profile
 <p align="center">
   <img src="public/gifs/Profile_edit_settings.gif" width="600" alt="Edit profile">
 </p>
@@ -71,3 +71,19 @@ npm install
 
 # run the server
 npm start
+
+
+## ⚡ Running
+Gitvault works with a terminal like github and other hosts with push and pull commands, handled by git-http-backend
+When uploading your project, make it a zip project, gitvault will decompress it and make the folder structure correctly with .init file.
+  - You can upload it by click or drag and dropping
+
+## 📦 Project features
+- git-http-backend for git commands
+- Login/Register by firebase
+- Internal decompression of zipped projects when uploading your project
+- Pug for rendering
+- Multer for uploading files
+- Dropzone for Drag n Drop
+- Commenting and liking or disliking user projects
+
