@@ -44,7 +44,7 @@ Below are live previews (GIFs) of GitVault-NodeJS in action. All assets are loca
 
 # Upload a zip project by drag n drop
 <p align="center">
-  <img src="public/gifs/UploadByDragNDrop.gif" width="600" alt="Upload By Drag n drop">
+  <img src="public/gifs/UploadByDragNdrop.gif" width="600" alt="Upload By Drag n drop">
 </p>
 
 # View project files
@@ -73,12 +73,14 @@ npm install
 npm start
 
 
+
 ## ⚡ Running
 Gitvault works with a terminal like github and other hosts with push and pull commands, handled by git-http-backend
 When uploading your project, make it a zip project, gitvault will decompress it and make the folder structure correctly with .init file.
   - You can upload it by click or drag and dropping
 
 ## 📦 Project features
+
 - git-http-backend for git commands
 - Login/Register by firebase
 - Internal decompression of zipped projects when uploading your project
